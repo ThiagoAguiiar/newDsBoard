@@ -5,6 +5,7 @@ import { ModalProvider } from "./context/ModalContext";
 import { UserProvider } from "./context/UserContext";
 import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
+import Register from "./pages/Register";
 
 export function RoutesApp() {
   return (
@@ -15,6 +16,7 @@ export function RoutesApp() {
             <Header />
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/register" element={<Register />} />
               <Route
                 path="/dashboard"
                 element={
@@ -35,7 +37,7 @@ interface PrivateRoutesProps {
   children: JSX.Element;
 }
 
-function PrivateRoutes({ children }: PrivateRoutesProps) {
-  const session = true;
-  return session ? children : <Navigate to="/" />;
+function PrivateRoutes({ children }: PrivateRoutesProps): JSX.Element {
+  const token = localStorage.getItem("token");
+  return token ? children : <Navigate to="/" />;
 }

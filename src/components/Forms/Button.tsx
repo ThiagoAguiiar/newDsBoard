@@ -2,7 +2,7 @@ import React, { MouseEventHandler } from "react";
 import styles from "./Button.module.scss";
 
 interface ButtonTypes {
-  value: string;
+  value: string | JSX.Element;
   fontSize?: string;
   borderRadius?: string;
   onClick?: MouseEventHandler<HTMLButtonElement>;

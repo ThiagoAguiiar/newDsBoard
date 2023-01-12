@@ -1,0 +1,30 @@
+.container {
+  width: 100%;
+  height: calc(100vh - 4rem);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  justify-content: center;
+  align-content: center;
+}
+
+.form {
+  width: 90%;
+  height: 100%;
+  background: #ffffff;
+}
+
+.body {
+  margin-top: 2rem;
+}
+
+.haveAccount {
+  padding: .6rem 0rem;
+  font-size: 15px; 
+  font-weight: 500;
+  
+  span {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}

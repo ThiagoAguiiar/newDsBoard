@@ -1,84 +1,93 @@
 import React from "react";
+import { app } from "../database/Firebase";
 import {
   getAuth,
   createUserWithEmailAndPassword,
+  User,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { app } from "../database/Firebase";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 
-const defaultValue = {
-  login: false,
-  errorUser: null,
-  loading: false,
-  setLogin: () => undefined,
-  setErrorUser: () => undefined,
-  setLoading: () => undefined,
-  cadastrarUser: () => undefined,
-  loginUser: () => undefined,
-};
-
-interface UserContextProps {
-  login: boolean;
-  loading: boolean;
-  errorUser: string | null;
-  setLogin: (state: boolean) => void;
-  setErrorUser: (state: string | null) => void;
-  setLoading: (state: boolean) => void;
-  cadastrarUser: (email: string, password: string) => void;
-  loginUser: (email: string, password: string) => void;
-}
-
+// Tipagem dos parâmetros
 interface UserProviderProps {
   children: JSX.Element;
 }
 
-export const UserContext = React.createContext<UserContextProps>(defaultValue);
+interface UserContextProps {
+  loading: boolean;
+  setLoading: (state: boolean) => void;
+  data: User | null;
+  setData: (value: User | null) => void;
+  errorAuth: string | null;
+  setErrorAuth: (state: string | null) => void;
+  cadastrarUsuario: (email: string, password: string) => void;
+  loginUsuario: (email: string, password: string) => void;
+}
 
+// Valores iniciais
+const initialValue = {
+  loading: false,
+  setLoading: () => undefined,
+  data: null,
+  setData: () => undefined,
+  errorAuth: null,
+  setErrorAuth: () => undefined,
+  cadastrarUsuario: () => undefined,
+  loginUsuario: () => undefined,
+};
+
+export const UserContext = React.createContext<UserContextProps>(initialValue);
+
+// Função provedora
 export const UserProvider = ({ children }: UserProviderProps) => {
-  const [login, setLogin] = React.useState(defaultValue.login);
-  const [errorUser, setErrorUser] = React.useState<string | null>(
-    defaultValue.errorUser
-  );
-  const [loading, setLoading] = React.useState(defaultValue.loading);
-
   const auth = getAuth(app);
 
-  // Fazendo login do usuário
-  async function loginUser(email: string, password: string) {
-    await signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
+  const [loading, setLoading] = React.useState(initialValue.loading);
+  const [data, setData] = React.useState<User | null>(initialValue.data);
+  const [errorAuth, setErrorAuth] = React.useState<string | null>(
+    initialValue.errorAuth
+  );
+
+  // Cadastrar Funcionário no Firebase
+  function cadastrarUsuario(email: string, password: string) {
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userData) => {
         setLoading(true);
-        setErrorUser(null);
-        console.log(userCredential.user);
+        setData(userData.user);
       })
-      .catch((e) => {
-        setErrorUser(e.code);
-      })
-      .finally(() => {
+      .catch((error) => {
         setLoading(false);
-      });
+        setErrorAuth(error.code);
+        console.log(error);
+      })
+      .finally(() => setLoading(false));
   }
 
-  // Cadastrando um usuário no Banco de dados
-  function cadastrarUser(email: string, password: string) {
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => console.log(userCredential.user))
-      .catch((error) => {
-        setErrorUser(error.errorMessage);
-      });
+  // Login Funcionário Firebase
+  async function loginUsuario(email: string, password: string) {
+    try {
+      setLoading(true);
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      const response = result.user;
+      localStorage.setItem("token", response.uid);
+    } catch (error: any) {
+      setErrorAuth(error.code);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
     <UserContext.Provider
       value={{
-        login,
         loading,
-        errorUser,
-        setLogin,
-        setErrorUser,
         setLoading,
-        cadastrarUser,
-        loginUser,
+        cadastrarUsuario,
+        loginUsuario,
+        data,
+        setData,
+        errorAuth,
+        setErrorAuth,
       }}
     >
       {children}

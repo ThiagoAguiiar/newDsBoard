@@ -3,22 +3,25 @@ import styles from "./LoginForm.module.scss";
 import { ModalContext } from "../../context/ModalContext";
 import { GrClose } from "react-icons/gr";
 import { Input } from "../Forms/Input";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { Button } from "../Forms/Button";
 import { useForm } from "../../hooks/useForm";
 import { ServicesButton } from "./ServicesButton";
 import { FcGoogle } from "react-icons/fc";
 import { UserContext } from "../../context/UserContext";
 import { Error } from "../Forms/Error";
+import { Loading } from "../Other/Loading";
 
 // Modal com Formulário de Login
 export function LoginForm() {
+  const token = localStorage.getItem("token");
+
   const { setModal } = React.useContext(ModalContext);
-  const { loginUser, loading, errorUser, setErrorUser } =
+  const { loginUsuario, loading, errorAuth, setErrorAuth } =
     React.useContext(UserContext);
 
   React.useEffect(() => {
-    setErrorUser(null);
+    setErrorAuth(null);
   }, []);
 
   const email = useForm("email");
@@ -28,7 +31,7 @@ export function LoginForm() {
     e.preventDefault();
 
     if (email.validate() && password.validate()) {
-      loginUser(email.value, password.value);
+      loginUsuario(email.value, password.value);
     }
   }
 
@@ -55,7 +58,18 @@ export function LoginForm() {
           </div>
           <div style={{ marginTop: "1.2rem" }}>
             <Button
-              value={loading ? "Carregando..." : "Entrar"}
+              value={
+                loading ? (
+                  <Loading
+                    width="25px"
+                    height="25px"
+                    border="4px solid #ffffff"
+                    borderTop="4px solid #0E38CC"
+                  />
+                ) : (
+                  "Entrar"
+                )
+              }
               borderRadius="3px"
               fontSize="1rem"
             />
@@ -67,13 +81,16 @@ export function LoginForm() {
             />
           </div>
           <div style={{ textAlign: "center", paddingTop: "1.2rem" }}>
-            <Error error={errorUser} />
+            <Error error={errorAuth} />
           </div>
         </form>
       </div>
       <div className={styles.cadastrar}>
-        <Link to="/cadastrar">Criar uma conta</Link>
+        <Link to="/register" onClick={() => setModal(false)}>
+          Criar uma conta
+        </Link>
       </div>
+      {token && <Navigate to="/dashboard" />}
     </ModalOpacity>
   );
 }
