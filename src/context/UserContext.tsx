@@ -68,6 +68,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
           photo: response.photoURL,
         })
       );
+      navigate("/dashboard");
     } catch (error: any) {
       setErrorAuth(error.code);
     } finally {

@@ -19,12 +19,6 @@ export default function Register() {
 
   const inputFields = [
     {
-      id: "name",
-      placeholder: "Nome",
-      type: "text",
-      other: name,
-    },
-    {
       id: "email",
       placeholder: "Email",
       type: "text",
@@ -50,21 +44,22 @@ export default function Register() {
     <div className={styles.container}>
       <form className={styles.form} onSubmit={submitData}>
         <div className={styles.title}>
-          <h1>Criar uma conta</h1>
+          <h1>Criar uma nova conta</h1>
           <p>
-            Organize e gerencie suas tarefas facilmente com o DsBoard.
-            Cadastre-se gratuitamente.
+            Cadastre-se gratuitamente e tenha acesso ao melhor gerenciador de
+            tarefas.
           </p>
         </div>
         <div className={styles.body}>
           {inputFields.map((item, index) => (
-            <Input
-              key={index}
-              id={item.id}
-              placeholder={item.placeholder}
-              type={item.type}
-              {...item.other}
-            />
+            <div key={index} style={{ marginBottom: "1.2rem" }}>
+              <Input
+                id={item.id}
+                placeholder={item.placeholder}
+                type={item.type}
+                {...item.other}
+              />
+            </div>
           ))}
 
           <div style={{ marginTop: "1.2rem" }}>
@@ -72,9 +67,9 @@ export default function Register() {
               value={
                 loading ? (
                   <Loading
-                    width="30px"
-                    height="30px"
-                    border="5px solid #ffffff"
+                    width="25px"
+                    height="25px"
+                    border="3px solid #ffffff"
                     borderTop="5px solid #0E38CC"
                   />
                 ) : (
@@ -83,6 +78,7 @@ export default function Register() {
               }
               borderRadius="3px"
               fontSize="1rem"
+              onClick={() => cadastrarUsuario(email.value, password.value)}
             />
           </div>
         </div>
@@ -92,6 +88,7 @@ export default function Register() {
         </p>
         <Error error={errorAuth} />
       </form>
+      <div></div>
     </div>
   );
 }

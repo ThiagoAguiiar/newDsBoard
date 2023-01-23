@@ -63,8 +63,8 @@ export function LoginForm() {
                   <Loading
                     width="25px"
                     height="25px"
-                    border="4px solid #ffffff"
-                    borderTop="4px solid #0E38CC"
+                    border="3px solid #ffffff"
+                    borderTop="3px solid #0E38CC"
                   />
                 ) : (
                   "Entrar"
@@ -82,13 +82,13 @@ export function LoginForm() {
           </div>
           <div style={{ textAlign: "center", paddingTop: "1.2rem" }}>
             <Error error={errorAuth} />
+            <div className="cadastrar">
+              <Link to="/register" onClick={() => setModal(false)}>
+                Crie uma conta
+              </Link>
+            </div>
           </div>
         </form>
-      </div>
-      <div className={styles.cadastrar}>
-        <Link to="/register" onClick={() => setModal(false)}>
-          Criar uma conta
-        </Link>
       </div>
       {token && <Navigate to="/dashboard" />}
     </ModalOpacity>

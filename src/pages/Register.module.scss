@@ -3,14 +3,14 @@
   height: calc(100vh - 4rem);
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  justify-content: center;
+  justify-content: center;  
   align-content: center;
 }
 
 .form {
-  width: 90%;
+  width: 80%;
   height: 100%;
-  background: #ffffff;
+  border-radius: 10px;
 }
 
 .body {
@@ -24,7 +24,6 @@
   
   span {
     color: blue;
-    text-decoration: underline;
     cursor: pointer;
   }
 }
