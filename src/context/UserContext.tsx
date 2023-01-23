@@ -6,6 +6,7 @@ import {
   User,
   signInWithEmailAndPassword,
 } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 // Tipagem dos parâmetros
 interface UserProviderProps {
@@ -21,23 +22,26 @@ interface UserContextProps {
   setErrorAuth: (state: string | null) => void;
   cadastrarUsuario: (email: string, password: string) => void;
   loginUsuario: (email: string, password: string) => void;
+  logoutUsuario: () => void;
 }
 
 // Valores iniciais
 const initialValue = {
   loading: false,
-  setLoading: () => undefined,
   data: null,
-  setData: () => undefined,
   errorAuth: null,
+  setLoading: () => undefined,
+  setData: () => undefined,
   setErrorAuth: () => undefined,
   cadastrarUsuario: () => undefined,
   loginUsuario: () => undefined,
+  logoutUsuario: () => undefined,
 };
 
 export const UserContext = React.createContext<UserContextProps>(initialValue);
 
 export const UserProvider = ({ children }: UserProviderProps) => {
+  const navigate = useNavigate();
   const auth = getAuth(app);
   const [loading, setLoading] = React.useState(initialValue.loading);
   const [data, setData] = React.useState<User | null>(initialValue.data);
@@ -94,6 +98,14 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   }
 
   // Deslogar Funcionário
+  function logoutUsuario() {
+    localStorage.removeItem("token");
+    navigate("/");
+    setLoading(false);
+    setErrorAuth(null);
+    setData(null);
+    location.reload();
+  }
 
   return (
     <UserContext.Provider
@@ -106,6 +118,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         loginUsuario,
         setData,
         setErrorAuth,
+        logoutUsuario,
       }}
     >
       {children}

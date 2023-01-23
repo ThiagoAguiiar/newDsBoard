@@ -8,6 +8,7 @@ interface UserDataProps {
 }
 
 export function Profile() {
+  const { logoutUsuario } = React.useContext(UserContext);
   const [data, setData] = React.useState<null | UserDataProps>(null);
 
   React.useEffect(() => {
@@ -19,7 +20,7 @@ export function Profile() {
   return (
     <div>
       {data?.name ? data.name : "Olá, usuário"}
-      <button>Sair</button>
+      <button onClick={() => logoutUsuario()}>Sair</button>
     </div>
   );
 }
