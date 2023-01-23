@@ -6,7 +6,6 @@ import {
   User,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { useLocalStorage } from "../hooks/useLocalStorage";
 
 // Tipagem dos parâmetros
 interface UserProviderProps {
@@ -38,10 +37,8 @@ const initialValue = {
 
 export const UserContext = React.createContext<UserContextProps>(initialValue);
 
-// Função provedora
 export const UserProvider = ({ children }: UserProviderProps) => {
   const auth = getAuth(app);
-
   const [loading, setLoading] = React.useState(initialValue.loading);
   const [data, setData] = React.useState<User | null>(initialValue.data);
   const [errorAuth, setErrorAuth] = React.useState<string | null>(
@@ -49,18 +46,29 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   );
 
   // Cadastrar Funcionário no Firebase
-  function cadastrarUsuario(email: string, password: string) {
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userData) => {
-        setLoading(true);
-        setData(userData.user);
-      })
-      .catch((error) => {
-        setLoading(false);
-        setErrorAuth(error.code);
-        console.log(error);
-      })
-      .finally(() => setLoading(false));
+  async function cadastrarUsuario(email: string, password: string) {
+    try {
+      setLoading(true);
+      const result = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const response = result.user;
+      localStorage.setItem("token", response.uid);
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          name: response.displayName,
+          email: response.email,
+          photo: response.photoURL,
+        })
+      );
+    } catch (error: any) {
+      setErrorAuth(error.code);
+    } finally {
+      setLoading(false);
+    }
   }
 
   // Login Funcionário Firebase
@@ -70,6 +78,14 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       const result = await signInWithEmailAndPassword(auth, email, password);
       const response = result.user;
       localStorage.setItem("token", response.uid);
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          name: response.displayName,
+          email: response.email,
+          photo: response.photoURL,
+        })
+      );
     } catch (error: any) {
       setErrorAuth(error.code);
     } finally {
@@ -77,16 +93,18 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     }
   }
 
+  // Deslogar Funcionário
+
   return (
     <UserContext.Provider
       value={{
         loading,
+        data,
+        errorAuth,
         setLoading,
         cadastrarUsuario,
         loginUsuario,
-        data,
         setData,
-        errorAuth,
         setErrorAuth,
       }}
     >
