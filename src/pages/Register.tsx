@@ -1,4 +1,5 @@
 import React from "react";
+import { Navigate } from "react-router-dom";
 import { Button } from "../components/Forms/Button";
 import { Error } from "../components/Forms/Error";
 import { Input } from "../components/Forms/Input";
@@ -9,11 +10,12 @@ import { useForm } from "../hooks/useForm";
 import styles from "./Register.module.scss";
 
 export default function Register() {
+  const token = localStorage.getItem("toke");
+
   const { cadastrarUsuario, errorAuth, loading } =
     React.useContext(UserContext);
   const { setModal } = React.useContext(ModalContext);
 
-  const name = useForm();
   const email = useForm("email");
   const password = useForm();
 
@@ -35,7 +37,7 @@ export default function Register() {
   function submitData(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    if (email.validate() && password.validate() && name.validate()) {
+    if (email.validate() && password.validate()) {
       cadastrarUsuario(email.value, password.value);
     }
   }
@@ -45,14 +47,10 @@ export default function Register() {
       <form className={styles.form} onSubmit={submitData}>
         <div className={styles.title}>
           <h1>Criar uma nova conta</h1>
-          <p>
-            Cadastre-se gratuitamente e tenha acesso ao melhor gerenciador de
-            tarefas.
-          </p>
         </div>
         <div className={styles.body}>
           {inputFields.map((item, index) => (
-            <div key={index} style={{ marginBottom: "1.2rem" }}>
+            <div key={index} style={{ marginBottom: ".5rem" }}>
               <Input
                 id={item.id}
                 placeholder={item.placeholder}
@@ -81,6 +79,9 @@ export default function Register() {
               onClick={() => cadastrarUsuario(email.value, password.value)}
             />
           </div>
+          <div className={styles.info}>
+            Você poderá completar seu perfil na página de Perfil do usuário
+          </div>
         </div>
         <p className={styles.haveAccount}>
           Possui uma conta?{" "}
@@ -89,6 +90,7 @@ export default function Register() {
         <Error error={errorAuth} />
       </form>
       <div></div>
+      {token && <Navigate to="/dashboard" />}
     </div>
   );
 }

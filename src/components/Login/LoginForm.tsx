@@ -12,17 +12,19 @@ import { UserContext } from "../../context/UserContext";
 import { Error } from "../Forms/Error";
 import { Loading } from "../Other/Loading";
 
-// Modal com Formulário de Login
+interface ModalOpacityProps {
+  children: React.ReactNode;
+}
+
 export function LoginForm() {
-  const token = localStorage.getItem("token");
-
-  const { setModal } = React.useContext(ModalContext);
-  const { loginUsuario, loading, errorAuth, setErrorAuth } =
-    React.useContext(UserContext);
-
   React.useEffect(() => {
     setErrorAuth(null);
   }, []);
+
+  const token = localStorage.getItem("token");
+  const { setModal } = React.useContext(ModalContext);
+  const { loginUsuario, loading, errorAuth, setErrorAuth } =
+    React.useContext(UserContext);
 
   const email = useForm("email");
   const password = useForm();
@@ -93,10 +95,6 @@ export function LoginForm() {
       {token && <Navigate to="/dashboard" />}
     </ModalOpacity>
   );
-}
-
-interface ModalOpacityProps {
-  children: React.ReactNode;
 }
 
 // Opacidade do fundo do Modal

@@ -68,7 +68,6 @@ export const UserProvider = ({ children }: UserProviderProps) => {
           photo: response.photoURL,
         })
       );
-      navigate("/dashboard");
     } catch (error: any) {
       setErrorAuth(error.code);
     } finally {
@@ -101,10 +100,10 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   // Deslogar Funcionário
   function logoutUsuario() {
     localStorage.removeItem("token");
-    navigate("/");
     setLoading(false);
     setErrorAuth(null);
     setData(null);
+    navigate("/");
     location.reload();
   }
 
