@@ -1,5 +1,4 @@
 import React from "react";
-import { Navigate } from "react-router-dom";
 import { Button } from "../components/Forms/Button";
 import { Error } from "../components/Forms/Error";
 import { Input } from "../components/Forms/Input";
@@ -32,9 +31,17 @@ export default function Register() {
     },
   ];
 
+  function submitData(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    if (email.validate() && password.validate()) {
+      cadastrarUsuario(email.value, password.value);
+    }
+  }
+
   return (
     <div className={styles.container}>
-      <form className={styles.form}>
+      <form className={styles.form} onSubmit={submitData}>
         <div className={styles.title}>
           <h1>Criar uma nova conta</h1>
         </div>

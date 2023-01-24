@@ -124,10 +124,10 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   // Deslogar Funcionário
   function logoutUsuario() {
     localStorage.removeItem("token");
+    window.location.reload();
     setLoading(false);
     setErrorAuth(null);
     navigate("/");
-    location.reload();
   }
 
   return (

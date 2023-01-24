@@ -24,3 +24,7 @@
 .input::placeholder {
   font-size: .940rem;
 }
+
+input[type="file"] {
+  display: none;
+}
