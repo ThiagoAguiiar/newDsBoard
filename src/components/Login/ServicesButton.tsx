@@ -4,14 +4,18 @@ import styles from "./ServicesButton.module.scss";
 
 interface ServicesButtonProps {
   service: string;
-  event?: MouseEventHandler<HTMLButtonElement>;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
   icon: unknown;
 }
 
-export function ServicesButton({ service, event, icon }: ServicesButtonProps) {
+export function ServicesButton({
+  service,
+  onClick,
+  icon,
+}: ServicesButtonProps) {
   return (
     <div className={styles.container}>
-      <button className={styles.button} onClick={event}>
+      <button className={styles.button} onClick={onClick}>
         <>{icon}</>
         <>{service}</>
       </button>

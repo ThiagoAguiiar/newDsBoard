@@ -23,7 +23,7 @@ export function LoginForm() {
 
   const token = localStorage.getItem("token");
   const { setModal } = React.useContext(ModalContext);
-  const { loginUsuario, loading, errorAuth, setErrorAuth } =
+  const { loginUsuario, loginGoogle, loading, errorAuth, setErrorAuth } =
     React.useContext(UserContext);
 
   const email = useForm("email");
@@ -78,8 +78,9 @@ export function LoginForm() {
           </div>
           <div className={styles.Auth}>
             <ServicesButton
-              service={"Entrar com o Google"}
+              service={loading ? "Carregando..." : "Entrar com o Google"}
               icon={<FcGoogle size={30} />}
+              onClick={() => loginGoogle()}
             />
           </div>
           <div style={{ textAlign: "center", paddingTop: "1.2rem" }}>

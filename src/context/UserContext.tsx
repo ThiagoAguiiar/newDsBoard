@@ -1,10 +1,11 @@
 import React from "react";
-import { app } from "../database/Firebase";
+import { app } from "../api/Firebase";
 import {
   getAuth,
   createUserWithEmailAndPassword,
-  User,
   signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
@@ -16,12 +17,11 @@ interface UserProviderProps {
 interface UserContextProps {
   loading: boolean;
   setLoading: (state: boolean) => void;
-  data: User | null;
-  setData: (value: User | null) => void;
   errorAuth: string | null;
   setErrorAuth: (state: string | null) => void;
   cadastrarUsuario: (email: string, password: string) => void;
   loginUsuario: (email: string, password: string) => void;
+  loginGoogle: () => void;
   logoutUsuario: () => void;
 }
 
@@ -31,10 +31,10 @@ const initialValue = {
   data: null,
   errorAuth: null,
   setLoading: () => undefined,
-  setData: () => undefined,
   setErrorAuth: () => undefined,
   cadastrarUsuario: () => undefined,
   loginUsuario: () => undefined,
+  loginGoogle: () => undefined,
   logoutUsuario: () => undefined,
 };
 
@@ -44,7 +44,6 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const navigate = useNavigate();
   const auth = getAuth(app);
   const [loading, setLoading] = React.useState(initialValue.loading);
-  const [data, setData] = React.useState<User | null>(initialValue.data);
   const [errorAuth, setErrorAuth] = React.useState<string | null>(
     initialValue.errorAuth
   );
@@ -97,12 +96,36 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     }
   }
 
+  // Login com conta do Google
+  async function loginGoogle() {
+    const provider = new GoogleAuthProvider();
+    const auth = getAuth(app);
+
+    try {
+      setLoading(true);
+      const result = await signInWithPopup(auth, provider);
+      const response = result.user;
+      localStorage.setItem("token", response.uid);
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          name: response.displayName,
+          email: response.email,
+          photo: response.photoURL,
+        })
+      );
+    } catch (error: any) {
+      console.log(error.code);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   // Deslogar Funcionário
   function logoutUsuario() {
     localStorage.removeItem("token");
     setLoading(false);
     setErrorAuth(null);
-    setData(null);
     navigate("/");
     location.reload();
   }
@@ -111,14 +134,13 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     <UserContext.Provider
       value={{
         loading,
-        data,
         errorAuth,
         setLoading,
         cadastrarUsuario,
         loginUsuario,
-        setData,
         setErrorAuth,
         logoutUsuario,
+        loginGoogle,
       }}
     >
       {children}
