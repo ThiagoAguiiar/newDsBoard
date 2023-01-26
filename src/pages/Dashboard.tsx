@@ -4,8 +4,8 @@ import { Input } from "../components/Forms/Input";
 import { ModalContext } from "../context/ModalContext";
 import { useForm } from "../hooks/useForm";
 import { FiPaperclip } from "react-icons/fi";
-import { RiNumber5 } from "react-icons/ri";
 import styles from "./Dashboard.module.scss";
+import { TaskContext } from "../context/TasksContext";
 
 interface UserDataProps {
   name: string;
@@ -61,6 +61,11 @@ export default function Dashboard() {
             </div>
           </form>
         </div>
+      </div>
+
+      <div className={styles.listTask}>
+        <p>Suas tarefas</p>
+        <div className={styles.taskContainer}></div>
       </div>
     </div>
   );
