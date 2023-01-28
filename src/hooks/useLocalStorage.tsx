@@ -1,14 +1,26 @@
 import React from "react";
 
-export function useLocalStorage(key: string, initialValue: any) {
-  const [token, setToken] = React.useState(() => {
-    const local = window.localStorage.getItem(key);
-    return local ? local : initialValue;
+export default function useLocalStorage(key: string, value: string | null) {
+  const [state, setState] = React.useState(() => {
+    if (!value) return;
+
+    try {
+      const value = localStorage.getItem(key);
+      return value ? JSON.parse(value) : value;
+    } catch (e) {
+      return value;
+    }
   });
 
   React.useEffect(() => {
-    localStorage.setItem(key, token);
-  }, []);
+    if (state) {
+      try {
+        localStorage.setItem(key, JSON.stringify(state));
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }, [state, key]);
 
-  return { token, setToken };
+  return [state, setState];
 }

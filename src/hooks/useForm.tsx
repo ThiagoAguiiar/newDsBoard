@@ -1,6 +1,5 @@
 import React from "react";
 import isEmail from "validator/lib/isEmail";
-import { UserContext } from "../context/UserContext";
 
 const validation = {
   email: {
@@ -10,7 +9,6 @@ const validation = {
 
 // Recebe um tipo (type input)
 export function useForm(type?: keyof typeof validation) {
-  const { setErrorAuth } = React.useContext(UserContext);
   const [value, setValue] = React.useState<string>("");
   const [error, setError] = React.useState<string | null>(null);
 
@@ -30,8 +28,6 @@ export function useForm(type?: keyof typeof validation) {
 
   // onChange Event Input
   function onChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setErrorAuth(null);
-
     if (error) {
       validate(e.target.value);
     }

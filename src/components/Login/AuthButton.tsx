@@ -1,5 +1,4 @@
 import React from "react";
-import { Profile } from "../Dashboard/Profile";
 import styles from "./AuthButton.module.scss";
 
 interface ButtonProps {
@@ -17,11 +16,7 @@ export function AuthButton({
   radius,
   onClick,
 }: ButtonProps) {
-  const session = localStorage.getItem("token");
-
-  return session ? (
-    <Profile />
-  ) : (
+  return (
     <button
       className={styles.button}
       style={{ background: background, border: border, borderRadius: radius }}

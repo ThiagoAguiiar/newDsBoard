@@ -1,27 +1,30 @@
 import React from "react";
 
-const defaultValue = {
-  modal: false,
-  setModal: () => undefined,
+interface IProvider {
+  children: JSX.Element;
+}
+
+// Tipagem dos parâmetros do contexto
+interface IContext {
+  isOpenModal: boolean;
+  setIsOpenModal: (state: boolean) => void;
+}
+
+// Valores iniciais dos estados do componente
+const initialValue = {
+  isOpenModal: false,
+  setIsOpenModal: () => undefined,
 };
 
-interface ModalContextProps {
-  modal: boolean;
-  setModal: (state: boolean) => void;
-}
+export const ModalContext = React.createContext<IContext>(initialValue);
 
-interface ModalProviderProps {
-  children: React.ReactNode;
-}
-
-export const ModalContext =
-  React.createContext<ModalContextProps>(defaultValue);
-
-export const ModalProvider = ({ children }: ModalProviderProps) => {
-  const [modal, setModal] = React.useState(defaultValue.modal);
+export const ModalProvider = ({ children }: IProvider) => {
+  const [isOpenModal, setIsOpenModal] = React.useState(
+    initialValue.isOpenModal
+  );
 
   return (
-    <ModalContext.Provider value={{ modal, setModal }}>
+    <ModalContext.Provider value={{ isOpenModal, setIsOpenModal }}>
       {children}
     </ModalContext.Provider>
   );

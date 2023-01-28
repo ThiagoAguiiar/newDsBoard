@@ -1,15 +1,14 @@
 import React from "react";
 import styles from "./LoginForm.module.scss";
-import { ModalContext } from "../../context/ModalContext";
 import { GrClose } from "react-icons/gr";
 import { Input } from "../Forms/Input";
-import { Link, Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "../Forms/Button";
-import { useForm } from "../../hooks/useForm";
 import { ServicesButton } from "./ServicesButton";
 import { FcGoogle } from "react-icons/fc";
-import { UserContext } from "../../context/UserContext";
-import { Error } from "../Forms/Error";
+import { ModalContext } from "../../context/ModalContext";
+import { useForm } from "../../hooks/useForm";
+import { LoginContext } from "../../context/LoginContext";
 import { Loading } from "../Other/Loading";
 
 interface ModalOpacityProps {
@@ -17,37 +16,36 @@ interface ModalOpacityProps {
 }
 
 export function LoginForm() {
-  React.useEffect(() => {
-    setErrorAuth(null);
-  }, []);
+  // Fechando o Modal de Login
+  const { setIsOpenModal } = React.useContext(ModalContext);
+  const { loginWithEmailPassword, loginWithGoogleAccount, loading } =
+    React.useContext(LoginContext);
 
-  const token = localStorage.getItem("token");
-  const { setModal } = React.useContext(ModalContext);
-  const { loginUsuario, loginGoogle, loading, errorAuth, setErrorAuth } =
-    React.useContext(UserContext);
-
+  // Validando os campos do formulário
   const email = useForm("email");
   const password = useForm();
 
   function submitData(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    if (email.validate() && password.validate()) {
-      loginUsuario(email.value, password.value);
-    }
+    if (email.validate() && password.validate())
+      loginWithEmailPassword(email.value, password.value);
   }
 
   return (
     <ModalOpacity>
       <div className={styles.modal}>
         <div className={styles.modalHead}>
-          <div className={styles.btnClose} onClick={() => setModal(false)}>
+          <div
+            className={styles.btnClose}
+            onClick={() => setIsOpenModal(false)}
+          >
             <GrClose size={20} />
           </div>
           <h1>Fazer Login</h1>
           <p>Entrar na sua conta para continuar</p>
         </div>
-        <form onSubmit={submitData} className={styles.modalBody}>
+        <form className={styles.modalBody} onSubmit={submitData}>
           <Input id="email" placeholder="Email" type="text" {...email} />
           <Input
             id="password"
@@ -78,22 +76,18 @@ export function LoginForm() {
           </div>
           <div className={styles.Auth}>
             <ServicesButton
-              service={loading ? "Carregando..." : "Entrar com o Google"}
+              service="Entrar com o Google"
               icon={<FcGoogle size={30} />}
-              onClick={() => loginGoogle()}
+              onClick={() => loginWithGoogleAccount()}
             />
           </div>
           <div style={{ textAlign: "center", paddingTop: "1.2rem" }}>
-            <Error error={errorAuth} />
             <div className="cadastrar">
-              <Link to="/register" onClick={() => setModal(false)}>
-                Crie uma conta
-              </Link>
+              <Link to="/register">Crie uma conta</Link>
             </div>
           </div>
         </form>
       </div>
-      {token && <Navigate to="/dashboard" />}
     </ModalOpacity>
   );
 }

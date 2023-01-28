@@ -1,18 +1,10 @@
 import React from "react";
 import { Button } from "../components/Forms/Button";
-import { Error } from "../components/Forms/Error";
 import { Input } from "../components/Forms/Input";
-import { Loading } from "../components/Other/Loading";
-import { ModalContext } from "../context/ModalContext";
-import { UserContext } from "../context/UserContext";
 import { useForm } from "../hooks/useForm";
 import styles from "./Register.module.scss";
 
 export default function Register() {
-  const { cadastrarUsuario, errorAuth, loading } =
-    React.useContext(UserContext);
-  const { setModal } = React.useContext(ModalContext);
-
   const email = useForm("email");
   const password = useForm();
 
@@ -31,17 +23,9 @@ export default function Register() {
     },
   ];
 
-  function submitData(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-
-    if (email.validate() && password.validate()) {
-      cadastrarUsuario(email.value, password.value);
-    }
-  }
-
   return (
     <div className={styles.container}>
-      <form className={styles.form} onSubmit={submitData}>
+      <form className={styles.form}>
         <div className={styles.title}>
           <h1>Criar uma nova conta</h1>
         </div>
@@ -58,30 +42,13 @@ export default function Register() {
           ))}
 
           <div style={{ marginTop: "1.2rem" }}>
-            <Button
-              value={
-                loading ? (
-                  <Loading
-                    width="25px"
-                    height="25px"
-                    border="3px solid #ffffff"
-                    borderTop="5px solid #0E38CC"
-                  />
-                ) : (
-                  "Cadastrar"
-                )
-              }
-              borderRadius="3px"
-              fontSize="1rem"
-              onClick={() => cadastrarUsuario(email.value, password.value)}
-            />
+            <Button value="Cadastrar" borderRadius="3px" fontSize="1rem" />
           </div>
         </div>
         <p className={styles.haveAccount}>
-          Possui uma conta?{" "}
-          <span onClick={() => setModal(true)}>Fazer login</span>
+          Possui uma conta?
+          <span>Fazer login</span>
         </p>
-        <Error error={errorAuth} />
       </form>
     </div>
   );

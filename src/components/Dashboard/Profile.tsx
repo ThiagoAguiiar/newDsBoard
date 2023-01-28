@@ -1,26 +1,12 @@
 import React from "react";
-import { UserContext } from "../../context/UserContext";
-
-interface UserDataProps {
-  name: string;
-  email: string;
-  photo: string;
-}
+import { LoginContext } from "../../context/LoginContext";
 
 export function Profile() {
-  const { logoutUsuario } = React.useContext(UserContext);
-  const [data, setData] = React.useState<null | UserDataProps>(null);
-
-  React.useEffect(() => {
-    const userData = localStorage.getItem("user");
-    console.log(userData);
-    if (userData) setData(JSON.parse(userData));
-  }, []);
+  const { logoutUser } = React.useContext(LoginContext);
 
   return (
     <div>
-      {data?.name ? data.name : "Olá, usuário"}
-      <button onClick={() => logoutUsuario()}>Sair</button>
+      <button onClick={() => logoutUser()}>Sair</button>
     </div>
   );
 }

@@ -6,11 +6,16 @@ import styles from "./Logo.module.scss";
 interface LogoProps {
   color?: string;
   fontSize?: string;
+  disabledLink?: boolean;
 }
 
-export function Logo({ color, fontSize }: LogoProps) {
+export function Logo({ color, fontSize, disabledLink }: LogoProps) {
   return (
-    <Link to="/" className={styles.logo} style={{ fontSize: fontSize }}>
+    <Link
+      to={disabledLink ? "/dashboard" : "/"}
+      className={styles.logo}
+      style={{ fontSize: fontSize }}
+    >
       Ds<span style={{ color: color }}>Board</span>
     </Link>
   );
