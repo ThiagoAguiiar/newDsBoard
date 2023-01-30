@@ -36,6 +36,16 @@ export const LoginProvider = ({ children }: LoginProviderProps) => {
   const [error, setError] = useState<string | unknown | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
+  // Auto Login
+  React.useEffect(() => {
+    function autoLogin() {
+      const local = localStorage.getItem("token");
+      if (local) navigate("/dashboard");
+    }
+
+    autoLogin();
+  }, []);
+
   // Firebase config
   const auth = getAuth(app);
   const navigate = useNavigate();

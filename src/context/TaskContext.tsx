@@ -1,124 +1,3 @@
-/*  
-
-
-
-
-import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "../api/Firebase";
-import React from "react";
-
-interface IProvider {
-  children: JSX.Element;
-}
-
-interface ITask {
-  uid: string | null;
-  task: string;
-}
-
-interface IGetTask {
-  uid: string | null;
-}
-
-interface IStatus {
-  description: string | null;
-  code: string | null;
-}
-
-interface IContext {
-  createTask: (task: ITask) => void;
-  encodeDoc: (doc: File) => void;
-  decodeDoc: (doc: string) => void;
-  loading: boolean;
-  setLoading: (state: boolean) => void;
-  getTasks: (uid: IGetTask) => void;
-  status: IStatus | null;
-  setStatus: (state: IStatus) => void;
-}
-
-const initialValue = {
-  createTask: () => undefined,
-  encodeDoc: () => undefined,
-  decodeDoc: () => undefined,
-  loading: false,
-  setLoading: () => undefined,
-  getTasks: () => undefined,
-  status: null,
-  setStatus: () => undefined,
-};
-
-export const TaskContext = React.createContext<IContext>(initialValue);
-
-export const TaskProvider = ({ children }: IProvider) => {
-  const [loading, setLoading] = React.useState<boolean>(initialValue.loading);
-  const [status, setStatus] = React.useState<IStatus | null>(
-    initialValue.status
-  );
-
-  // Envia tarefa para o Firebase
-  async function createTask(taskData: ITask) {
-    try {
-      setLoading(true);
-      setStatus({ description: "Salvo com sucesso", code: "Ok" });
-
-      await addDoc(collection(db, "Tarefas"), {
-        tarefa: taskData.task,
-        user: taskData.uid,
-      });
-    } catch (e) {
-      console.log(e);
-      setStatus({ description: "Erro inesperado", code: "Error" });
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  // Busca todas as tarefas do usuário logado
-  async function getTasks(uid: IGetTask) {
-    try {
-      setLoading(true);
-      const q = query(collection(db, "Tarefas"), where("user", "==", uid.uid));
-      const result = await getDocs(q);
-      const response = result.docs.map((doc) => doc.data());
-      return response;
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  // Enconding and Decoding de Arquivos
-  function encodeDoc() {
-    return;
-  }
-
-  function decodeDoc() {
-    return;
-  }
-
-  return (
-    <TaskContext.Provider
-      value={{
-        createTask,
-        encodeDoc,
-        decodeDoc,
-        loading,
-        setLoading,
-        getTasks,
-        status,
-        setStatus,
-      }}
-    >
-      {children}
-    </TaskContext.Provider>
-  );
-};
-
-
-
-*/
-
 import { addDoc, collection } from "firebase/firestore";
 import React, { createContext, ReactNode, useState, useContext } from "react";
 import { db } from "../api/Firebase";
@@ -132,6 +11,7 @@ type TaskContextType = {
   setStatus: (status: StatusType) => void;
   getDate: () => string;
   createTask: (mewTask: NewTaskType) => Promise<void>;
+  encodeFile: (file: FileList) => void;
 };
 
 type TaskProviderType = {
@@ -176,6 +56,16 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
     return date.toLocaleString();
   };
 
+  // Encode File to base64
+  const encodeFile = (file: FileList) => {
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file[0]);
+    reader.onload = function (event) {
+      const base64 = event.target?.result?.toString();
+    };
+  };
+
   // Salvando tarefa no Firebase
   const createTask = async (newTask: NewTaskType) => {
     try {
@@ -214,6 +104,7 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
         setStatus: setInternalStatus,
         getDate,
         createTask,
+        encodeFile,
       }}
     >
       {children}

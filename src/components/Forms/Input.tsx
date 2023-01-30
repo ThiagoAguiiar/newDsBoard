@@ -6,7 +6,7 @@ import styles from "./Input.module.scss";
 interface InputProps {
   value?: string;
   id: string;
-  placeholder: string;
+  placeholder?: string;
   type: string;
   error?: string | null;
   onBlur?: FocusEventHandler<HTMLInputElement>;

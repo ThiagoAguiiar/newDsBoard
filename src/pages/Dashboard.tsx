@@ -25,6 +25,12 @@ export default function Dashboard() {
     }
   }, []);
 
+  // OnChange event para o input File
+  function getFile({ target }: React.ChangeEvent<HTMLInputElement>) {
+    const { files } = target;
+    if (files) task.encodeFile(files);
+  }
+
   // Enviando tarefa para o Banco de Dados
   function submitTask(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -48,7 +54,7 @@ export default function Dashboard() {
                   <FiPaperclip />
                   <p>arquivo</p>
                 </label>
-                <Input id="archive" placeholder="" type="file" />
+                <Input id="archive" type="file" onChange={getFile} />
               </div>
               <div className={styles.button}>
                 <Button
