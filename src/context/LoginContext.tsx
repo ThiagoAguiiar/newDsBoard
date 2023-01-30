@@ -1,4 +1,10 @@
-import React from "react";
+import React, {
+  createContext,
+  useContext,
+  ReactNode,
+  useState,
+  useCallback,
+} from "react";
 import {
   getAuth,
   GoogleAuthProvider,
@@ -8,115 +14,119 @@ import {
 import { app } from "../api/Firebase";
 import { useNavigate } from "react-router-dom";
 
-// Tipagem dos parâmetros do Contexto
-interface IContext {
-  error: string | null;
+type LoginContextType = {
+  error: string | null | unknown;
+  setError: (error: string) => void;
   loading: boolean;
-  setError: (state: string) => void;
-  setLoading: (state: boolean) => void;
+  setLoading: (loading: boolean) => void;
   loginWithEmailPassword: (email: string, password: string) => void;
   loginWithGoogleAccount: () => void;
-  logoutUser: () => void;
-}
-
-interface IProvider {
-  children: JSX.Element;
-}
-
-// Valores iniciais dos estados do componente
-const initialValue = {
-  error: null,
-  loading: false,
-  setError: () => undefined,
-  setLoading: () => undefined,
-  loginWithEmailPassword: () => undefined,
-  loginWithGoogleAccount: () => undefined,
-  logoutUser: () => undefined,
+  logout: () => void;
 };
 
-export const LoginContext = React.createContext<IContext>(initialValue);
+type LoginProviderProps = {
+  children: ReactNode | ReactNode[];
+};
 
-export const LoginProvider = ({ children }: IProvider) => {
-  const [loading, setLoading] = React.useState(initialValue.loading);
-  const [error, setError] = React.useState<string | null>(initialValue.error);
+// Context
+export const LoginContext = createContext<LoginContextType | null>(null);
 
-  const navigate = useNavigate();
+// Provider
+export const LoginProvider = ({ children }: LoginProviderProps) => {
+  const [error, setError] = useState<string | unknown | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  // Login no Firebase
+  // Firebase config
   const auth = getAuth(app);
+  const navigate = useNavigate();
   const provider = new GoogleAuthProvider();
 
-  async function loginWithEmailPassword(email: string, password: string) {
+  const setInternalError = (error: string) => {
+    setError(error);
+  };
+
+  const setInternalLoading = (loading: boolean) => {
+    setLoading(loading);
+  };
+
+  // Login com Email e Senha
+  const loginWithEmailPassword = async (email: string, password: string) => {
     try {
       setLoading(true);
-      setError(null);
-
       const result = await signInWithEmailAndPassword(auth, email, password);
       const response = result.user;
 
+      const userData = {
+        name: response.displayName,
+        email: response.email,
+        photo: response.photoURL,
+      };
+
       localStorage.setItem("token", JSON.stringify(response.uid));
+      localStorage.setItem("user-data", JSON.stringify(userData));
       navigate("/dashboard");
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
+      setError(e.code);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  // Login com conta do Google
-  async function loginWithGoogleAccount() {
+  // Login com Google
+  const loginWithGoogleAccount = async () => {
     try {
       setLoading(true);
-      setError(null);
-
       const result = await signInWithPopup(auth, provider);
       const response = result.user;
 
+      const userData = {
+        name: response.displayName,
+        email: response.email,
+        photo: response.photoURL,
+      };
+
       localStorage.setItem("token", JSON.stringify(response.uid));
+      localStorage.setItem("user-data", JSON.stringify(userData));
+
       navigate("/dashboard");
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
+      setError(e.code);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  // Login automático
-  React.useEffect(() => {
-    function autoLogin() {
-      const token = localStorage.getItem("token");
-      if (token) {
-        setError(null);
-        setLoading(true);
-        navigate("/dashboard");
-      }
-    }
-
-    autoLogin();
-  }, []);
-
-  // Deslogar Usuário da conta
-  const logoutUser = React.useCallback(async () => {
-    setLoading(false);
+  // Encerrar Sessão
+  const logout = useCallback(async () => {
     setError(null);
+    setLoading(true);
     navigate("/");
-
     localStorage.removeItem("token");
+    window.location.reload();
   }, [navigate]);
 
   return (
     <LoginContext.Provider
       value={{
-        loading,
-        setLoading,
         error,
-        setError,
+        loading,
+        setError: setInternalError,
         loginWithEmailPassword,
         loginWithGoogleAccount,
-        logoutUser,
+        setLoading: setInternalLoading,
+        logout,
       }}
     >
       {children}
     </LoginContext.Provider>
   );
+};
+
+// Hook para usar o contexto
+export const useLogin = () => {
+  const context = useContext(LoginContext);
+  if (!context) throw new Error("Você precisa usar o LoginProvider");
+  return context;
 };

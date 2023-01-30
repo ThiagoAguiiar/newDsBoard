@@ -8,18 +8,18 @@ import { ServicesButton } from "./ServicesButton";
 import { FcGoogle } from "react-icons/fc";
 import { ModalContext } from "../../context/ModalContext";
 import { useForm } from "../../hooks/useForm";
-import { LoginContext } from "../../context/LoginContext";
 import { Loading } from "../Other/Loading";
+import { useLogin } from "../../context/LoginContext";
+import { Error } from "../Forms/Error";
 
 interface ModalOpacityProps {
   children: React.ReactNode;
 }
 
 export function LoginForm() {
+  const login = useLogin();
   // Fechando o Modal de Login
   const { setIsOpenModal } = React.useContext(ModalContext);
-  const { loginWithEmailPassword, loginWithGoogleAccount, loading } =
-    React.useContext(LoginContext);
 
   // Validando os campos do formulário
   const email = useForm("email");
@@ -29,7 +29,7 @@ export function LoginForm() {
     e.preventDefault();
 
     if (email.validate() && password.validate())
-      loginWithEmailPassword(email.value, password.value);
+      login.loginWithEmailPassword(email.value, password.value);
   }
 
   return (
@@ -59,7 +59,7 @@ export function LoginForm() {
           <div style={{ marginTop: "1.2rem" }}>
             <Button
               value={
-                loading ? (
+                login.loading ? (
                   <Loading
                     width="25px"
                     height="25px"
@@ -78,14 +78,26 @@ export function LoginForm() {
             <ServicesButton
               service="Entrar com o Google"
               icon={<FcGoogle size={30} />}
-              onClick={() => loginWithGoogleAccount()}
+              onClick={() => login.loginWithGoogleAccount()}
             />
           </div>
           <div style={{ textAlign: "center", paddingTop: "1.2rem" }}>
             <div className="cadastrar">
-              <Link to="/register">Crie uma conta</Link>
+              <Link
+                to="/register"
+                style={{
+                  fontSize: "15px",
+                  textDecoration: "none",
+                  color: "#000000",
+                }}
+                onClick={() => setIsOpenModal(false)}
+              >
+                Crie uma conta
+              </Link>
             </div>
           </div>
+
+          {login.error ? <Error error={login.error.toString()} /> : null}
         </form>
       </div>
     </ModalOpacity>
