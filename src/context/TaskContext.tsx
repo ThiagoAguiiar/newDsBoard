@@ -9,6 +9,8 @@ type TaskContextType = {
   setError: (error: string) => void;
   status: StatusType | null;
   setStatus: (status: StatusType) => void;
+  toBase64: string | undefined | null;
+  setToBase64: (data: string) => void;
   getDate: () => string;
   createTask: (mewTask: NewTaskType) => Promise<void>;
   encodeFile: (file: FileList) => void;
@@ -37,6 +39,7 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null | unknown>(null);
   const [status, setStatus] = useState<StatusType | null>(null);
+  const [toBase64, setToBase64] = useState<string | null | undefined>(null);
 
   const setInternalLoading = (loading: boolean) => {
     setLoading(loading);
@@ -48,6 +51,10 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
 
   const setInternalStatus = (status: StatusType) => {
     setStatus({ msg: status.msg, response: status.response });
+  };
+
+  const setInternalToBase64 = (data: string) => {
+    setToBase64(data);
   };
 
   // Pegando a data que o usuário criou a tarefa
@@ -63,6 +70,7 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
     reader.readAsDataURL(file[0]);
     reader.onload = function (event) {
       const base64 = event.target?.result?.toString();
+      setToBase64(base64);
     };
   };
 
@@ -99,9 +107,11 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
         loading,
         error,
         status,
+        toBase64,
         setLoading: setInternalLoading,
         setError: setInternalError,
         setStatus: setInternalStatus,
+        setToBase64: setInternalToBase64,
         getDate,
         createTask,
         encodeFile,

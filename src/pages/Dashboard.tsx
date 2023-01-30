@@ -34,6 +34,8 @@ export default function Dashboard() {
   // Enviando tarefa para o Banco de Dados
   function submitTask(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    console.log(task.toBase64);
   }
 
   return (
