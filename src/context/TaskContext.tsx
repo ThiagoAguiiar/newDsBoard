@@ -1,5 +1,11 @@
 import { addDoc, collection } from "firebase/firestore";
-import React, { createContext, ReactNode, useState, useContext } from "react";
+import React, {
+  createContext,
+  ReactNode,
+  useState,
+  useContext,
+  useEffect,
+} from "react";
 import { db } from "../api/Firebase";
 
 type TaskContextType = {
@@ -41,6 +47,12 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
   const [status, setStatus] = useState<StatusType | null>(null);
   const [toBase64, setToBase64] = useState<string | null | undefined>(null);
 
+  // Buscando todas as tarefas do usuário
+  useEffect(() => {
+    const local = localStorage.getItem("token");
+    if (local) getAllTasks(JSON.parse(local));
+  }, []);
+
   const setInternalLoading = (loading: boolean) => {
     setLoading(loading);
   };
@@ -57,6 +69,18 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
     setToBase64(data);
   };
 
+  // Buscando os dados toda vez que o usuário logar
+  async function getAllTasks(uid: string) {
+    try {
+      setLoading(true);
+      setError(null);
+    } catch (e: any) {
+      setError(e);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   // Pegando a data que o usuário criou a tarefa
   const getDate = (): string => {
     const date = new Date();
@@ -72,6 +96,11 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
       const base64 = event.target?.result?.toString();
       setToBase64(base64);
     };
+  };
+
+  // Decode File to base64
+  const decodeFile = (file: string) => {
+    return;
   };
 
   // Salvando tarefa no Firebase
