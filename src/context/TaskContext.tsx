@@ -55,12 +55,6 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
   const [toBase64, setToBase64] = useState<string | null | undefined>(null);
   const [allTask, setAllTesk] = useState<null | DocumentData>(null);
 
-  // Buscando todas as tarefas do usuário
-  useEffect(() => {
-    const local = localStorage.getItem("token");
-    if (local) getAllTasks(JSON.parse(local));
-  }, []);
-
   const setInternalLoading = (loading: boolean) => {
     setLoading(loading);
   };
@@ -76,26 +70,6 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
   const setInternalToBase64 = (data: string) => {
     setToBase64(data);
   };
-
-  // Buscando os dados toda vez que o usuário logar
-  async function getAllTasks(uid: string) {
-    try {
-      const collectionTask = query(
-        collection(db, "Tarefas"),
-        where("user", "==", uid)
-      );
-
-      const result = await getDocs(collectionTask);
-      result.docs.map((doc) => setAllTesk(doc.data()));
-
-      setLoading(true);
-      setError(null);
-    } catch (e: any) {
-      setError(e);
-    } finally {
-      setLoading(false);
-    }
-  }
 
   // Pegando a data que o usuário criou a tarefa
   const getDate = (): string => {
@@ -145,6 +119,33 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
       setLoading(false);
     }
   };
+
+  // Buscando os dados toda vez que o usuário logar
+  async function getAllTasks(uid: string) {
+    try {
+      const collectionTask = query(
+        collection(db, "Tarefas"),
+        where("user", "==", uid)
+      );
+
+      const result = await getDocs(collectionTask);
+      console.log(result.docs.map((doc) => doc.data()));
+
+      setLoading(true);
+      setError(null);
+    } catch (e: any) {
+      setError(e);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Buscando todas as tarefas do usuário
+  // Preciso passar uma dependência
+  useEffect(() => {
+    const local = localStorage.getItem("token");
+    if (local) getAllTasks(JSON.parse(local));
+  }, []);
 
   return (
     <TaskContext.Provider

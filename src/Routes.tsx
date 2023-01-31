@@ -34,7 +34,7 @@ export function RoutesApp() {
                     </PrivateRoutes>
                   }
                 >
-                  <Route path="dashboard/:id" element={<Account />} />
+                  <Route path="/dashboard/:id" element={<Account />} />
                 </Route>
                 <Route path="*" element={<Error404 />} />
               </Routes>

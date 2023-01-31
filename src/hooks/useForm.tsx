@@ -1,6 +1,7 @@
 import React from "react";
 import isEmail from "validator/lib/isEmail";
 
+// Biblioteca validator para validar os dados
 const validation = {
   email: {
     validate: (value: string): boolean => isEmail(value),
