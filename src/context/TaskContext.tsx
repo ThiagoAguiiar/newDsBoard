@@ -1,4 +1,11 @@
-import { addDoc, collection } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  DocumentData,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import React, {
   createContext,
   ReactNode,
@@ -27,11 +34,11 @@ type TaskProviderType = {
 };
 
 type NewTaskType = {
-  uid: string;
+  uid: string | null;
   title: string;
-  description: string;
+  description?: string | null;
   date: string;
-  document?: File;
+  document?: string | null;
 };
 
 type StatusType = {
@@ -46,6 +53,7 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
   const [error, setError] = useState<string | null | unknown>(null);
   const [status, setStatus] = useState<StatusType | null>(null);
   const [toBase64, setToBase64] = useState<string | null | undefined>(null);
+  const [allTask, setAllTesk] = useState<null | DocumentData>(null);
 
   // Buscando todas as tarefas do usuário
   useEffect(() => {
@@ -72,6 +80,14 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
   // Buscando os dados toda vez que o usuário logar
   async function getAllTasks(uid: string) {
     try {
+      const collectionTask = query(
+        collection(db, "Tarefas"),
+        where("user", "==", uid)
+      );
+
+      const result = await getDocs(collectionTask);
+      result.docs.map((doc) => setAllTesk(doc.data()));
+
       setLoading(true);
       setError(null);
     } catch (e: any) {

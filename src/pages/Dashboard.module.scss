@@ -69,3 +69,17 @@ h1 {
 .taskContainer:hover {
   background: #e2e2e2d0;
 }
+
+.textArea {
+  padding: .5rem;
+  font-size: 1rem;
+  width: 100%;
+  resize: none;
+  border: 1px solid #EEEEEE;
+  outline: none;
+  transition: .2s all;
+}
+
+.textArea:focus {
+  box-shadow: 0 0 0 2px rgba(17, 85, 187, 0.938);
+}

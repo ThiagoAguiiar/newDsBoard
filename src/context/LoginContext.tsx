@@ -62,6 +62,7 @@ export const LoginProvider = ({ children }: LoginProviderProps) => {
   // Login com Email e Senha
   const loginWithEmailPassword = async (email: string, password: string) => {
     try {
+      setError(null);
       setLoading(true);
       const result = await signInWithEmailAndPassword(auth, email, password);
       const response = result.user;
@@ -86,6 +87,7 @@ export const LoginProvider = ({ children }: LoginProviderProps) => {
   // Login com Google
   const loginWithGoogleAccount = async () => {
     try {
+      setError(null);
       setLoading(true);
       const result = await signInWithPopup(auth, provider);
       const response = result.user;
@@ -114,6 +116,7 @@ export const LoginProvider = ({ children }: LoginProviderProps) => {
     setLoading(true);
     navigate("/");
     localStorage.removeItem("token");
+    localStorage.removeItem("user-data");
     window.location.reload();
   }, [navigate]);
 

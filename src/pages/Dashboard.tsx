@@ -12,9 +12,10 @@ export default function Dashboard() {
   const task = useTask();
   const { setIsOpenModal } = React.useContext(ModalContext);
   const [token, setToken] = React.useState<string | null>(null);
+  const [description, setDescription] = React.useState<string | null>(null);
+  const [file, setFile] = React.useState<boolean>(false);
 
   const title = useForm();
-  const description = useForm();
 
   React.useEffect(() => {
     setIsOpenModal(false);
@@ -28,12 +29,31 @@ export default function Dashboard() {
   // OnChange event para o input File
   function getFile({ target }: React.ChangeEvent<HTMLInputElement>) {
     const { files } = target;
-    if (files) task.encodeFile(files);
+    if (files) {
+      task.encodeFile(files);
+      setFile(true);
+    }
   }
+
+  // Onchange event para o TextArea
+  const getDescription = ({
+    target,
+  }: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setDescription(target.value);
+  };
 
   // Enviando tarefa para o Banco de Dados
   function submitTask(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (title.validate()) {
+      task.createTask({
+        title: title.value,
+        date: task.getDate(),
+        description: description,
+        uid: token,
+        document: task.toBase64,
+      });
+    }
   }
 
   return (
@@ -45,14 +65,20 @@ export default function Dashboard() {
             <form onSubmit={submitTask}>
               <Input
                 id="title-task"
-                placeholder="Título da Tarefa"
+                placeholder="Título"
                 type="text"
                 {...title}
+              />
+              <textarea
+                id="desc-task"
+                className={styles.textArea}
+                placeholder="Descrição"
+                onChange={getDescription}
               />
               <div className={styles.actions}>
                 <label htmlFor="archive">
                   <FiPaperclip />
-                  <p>arquivo</p>
+                  <p>{file ? "arquivo adicionado" : "arquivo"} </p>
                 </label>
                 <Input id="archive" type="file" onChange={getFile} />
               </div>
