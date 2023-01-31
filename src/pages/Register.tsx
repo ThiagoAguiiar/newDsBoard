@@ -25,7 +25,7 @@ export default function Register() {
 
   return (
     <div className={styles.container}>
-      <form className={styles.form}>
+      <form className={`${styles.form} animateLeft`}>
         <div className={styles.title}>
           <h1>Criar uma nova conta</h1>
         </div>

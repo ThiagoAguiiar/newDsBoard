@@ -1,10 +1,12 @@
 import React from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { Account } from "./components/Account/Account";
 import { Header } from "./components/Header/Header";
 import { LoginProvider } from "./context/LoginContext";
 import { ModalProvider } from "./context/ModalContext";
 import { TaskProvider } from "./context/TaskContext";
 import Dashboard from "./pages/Dashboard";
+import Error404 from "./pages/Error404";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
 
@@ -23,6 +25,7 @@ export function RoutesApp() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/register" element={<Register />} />
+
                 <Route
                   path="/dashboard"
                   element={
@@ -30,7 +33,10 @@ export function RoutesApp() {
                       <Dashboard />
                     </PrivateRoutes>
                   }
-                />
+                >
+                  <Route path="dashboard/:id" element={<Account />} />
+                </Route>
+                <Route path="*" element={<Error404 />} />
               </Routes>
             </div>
           </TaskProvider>

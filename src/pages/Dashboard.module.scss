@@ -78,8 +78,16 @@ h1 {
   border: 1px solid #EEEEEE;
   outline: none;
   transition: .2s all;
+  background: #EEEEEE;
+  border-radius: 3px;
+  color: #5B5B5B;
 }
 
-.textArea:focus {
-  box-shadow: 0 0 0 2px rgba(17, 85, 187, 0.938);
+.textArea:focus,
+.textArea:hover {
+  box-shadow: 0 0 0 3px rgba(17, 85, 187, 0.938);
+}
+
+.textArea::placeholder {
+  font-size: .940rem;
 }

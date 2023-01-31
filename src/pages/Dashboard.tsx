@@ -7,9 +7,13 @@ import { ModalContext } from "../context/ModalContext";
 import { useForm } from "../hooks/useForm";
 import { Loading } from "../components/Other/Loading";
 import { useTask } from "../context/TaskContext";
+import { useData } from "../hooks/useData";
 
 export default function Dashboard() {
+  // Hooks
   const task = useTask();
+  const data = useData();
+
   const { setIsOpenModal } = React.useContext(ModalContext);
   const [token, setToken] = React.useState<string | null>(null);
   const [description, setDescription] = React.useState<string | null>(null);
@@ -19,11 +23,7 @@ export default function Dashboard() {
 
   React.useEffect(() => {
     setIsOpenModal(false);
-    const local = localStorage.getItem("token");
-
-    if (local) {
-      setToken(JSON.parse(local));
-    }
+    setToken(data?.localToken);
   }, []);
 
   // OnChange event para o input File
@@ -61,7 +61,7 @@ export default function Dashboard() {
       <div className={styles.container}>
         <div className={styles.tasks}>
           <div>
-            <h1>Tarefas de </h1>
+            <h1>Criar uma nova tarefa</h1>
             <form onSubmit={submitTask}>
               <Input
                 id="title-task"
@@ -105,7 +105,7 @@ export default function Dashboard() {
         </div>
 
         <div className={styles.listTask}>
-          <p>Suas tarefas</p>
+          <p>Seus compromissos</p>
         </div>
       </div>
     </>
