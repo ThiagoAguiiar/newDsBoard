@@ -1,12 +1,14 @@
 import React from "react";
 import { Button } from "../components/Forms/Button";
 import { Input } from "../components/Forms/Input";
+import { useModal } from "../context/ModalContext";
 import { useForm } from "../hooks/useForm";
 import styles from "./Register.module.scss";
 
 export default function Register() {
   const email = useForm("email");
   const password = useForm();
+  const modal = useModal();
 
   const inputFields = [
     {
@@ -47,7 +49,7 @@ export default function Register() {
         </div>
         <p className={styles.haveAccount}>
           Possui uma conta?
-          <span>Fazer login</span>
+          <span onClick={() => modal.setIsOpenModal(true)}> Fazer login</span>
         </p>
       </form>
     </div>

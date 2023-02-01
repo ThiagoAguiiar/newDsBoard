@@ -1,5 +1,5 @@
 import React from "react";
-import { ModalContext } from "../../context/ModalContext";
+import { ModalContext, useModal } from "../../context/ModalContext";
 import { Profile } from "../Dashboard/Profile";
 import { AuthButton } from "../Login/AuthButton";
 import { LoginForm } from "../Login/LoginForm";
@@ -8,11 +8,11 @@ import styles from "./Header.module.scss";
 
 export function Header() {
   // Mostrando o Formulário de Login
-  const { isOpenModal, setIsOpenModal } = React.useContext(ModalContext);
+  const modal = useModal();
   const token = localStorage.getItem("token");
 
   function showModal() {
-    setIsOpenModal(true);
+    modal.setIsOpenModal(true);
   }
 
   return (
@@ -39,7 +39,7 @@ export function Header() {
         </nav>
       </header>
 
-      {isOpenModal && <LoginForm />}
+      {modal.isOpenModal && <LoginForm />}
     </>
   );
 }

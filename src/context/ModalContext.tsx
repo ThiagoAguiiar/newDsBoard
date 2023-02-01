@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 
 interface IProvider {
   children: JSX.Element;
@@ -23,9 +23,21 @@ export const ModalProvider = ({ children }: IProvider) => {
     initialValue.isOpenModal
   );
 
+  const setInternalIsOpenModal = (value: boolean) => {
+    setIsOpenModal(value);
+  };
+
   return (
-    <ModalContext.Provider value={{ isOpenModal, setIsOpenModal }}>
+    <ModalContext.Provider
+      value={{ isOpenModal, setIsOpenModal: setInternalIsOpenModal }}
+    >
       {children}
     </ModalContext.Provider>
   );
+};
+
+export const useModal = () => {
+  const context = useContext(ModalContext);
+  if (!context) throw new Error("Erro ao usar ModalContext");
+  return context;
 };

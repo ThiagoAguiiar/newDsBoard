@@ -24,8 +24,11 @@ type TaskContextType = {
   setStatus: (status: StatusType) => void;
   toBase64: string | undefined | null;
   setToBase64: (data: string) => void;
+  allTask: null | DocumentData[];
+  setAllTask: (data: DocumentData[]) => void;
   getDate: () => string;
   createTask: (mewTask: NewTaskType) => Promise<void>;
+  getAllTasks: (uid: string) => void;
   encodeFile: (file: FileList) => void;
 };
 
@@ -53,7 +56,7 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
   const [error, setError] = useState<string | null | unknown>(null);
   const [status, setStatus] = useState<StatusType | null>(null);
   const [toBase64, setToBase64] = useState<string | null | undefined>(null);
-  const [allTask, setAllTesk] = useState<null | DocumentData>(null);
+  const [allTask, setAllTask] = useState<null | DocumentData[]>(null);
 
   const setInternalLoading = (loading: boolean) => {
     setLoading(loading);
@@ -69,6 +72,10 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
 
   const setInternalToBase64 = (data: string) => {
     setToBase64(data);
+  };
+
+  const setInternalAllTask = (data: DocumentData[]) => {
+    setAllTask(data);
   };
 
   // Pegando a data que o usuário criou a tarefa
@@ -96,22 +103,24 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
   // Salvando tarefa no Firebase
   const createTask = async (newTask: NewTaskType) => {
     try {
+      // Desestruturação dos valores odo objeto
+      const { date, title, uid, description, document } = newTask;
+
       setLoading(true);
       setError(null);
 
-      const result = await addDoc(collection(db, "Tarefas"), {
-        title: newTask.title,
-        description: newTask.description,
-        date: newTask.date,
-        user: newTask.uid,
-        document: newTask.document,
+      await addDoc(collection(db, "Tarefas"), {
+        title: title,
+        description: description,
+        document: document,
+        date: date,
+        user: uid,
       });
-      const response = result.id;
-      if (response)
-        setStatus({
-          msg: "Salvo com sucesso",
-          response: "Ok",
-        });
+
+      setStatus({
+        msg: "Salvo com sucesso",
+        response: "Ok",
+      });
     } catch (e: unknown) {
       console.log(e);
       setError(e);
@@ -129,7 +138,8 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
       );
 
       const result = await getDocs(collectionTask);
-      console.log(result.docs.map((doc) => doc.data()));
+      const response = result.docs.map((doc) => doc.data());
+      setAllTask(response);
 
       setLoading(true);
       setError(null);
@@ -140,12 +150,10 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
     }
   }
 
-  // Buscando todas as tarefas do usuário
-  // Preciso passar uma dependência
   useEffect(() => {
     const local = localStorage.getItem("token");
     if (local) getAllTasks(JSON.parse(local));
-  }, []);
+  }, [allTask]);
 
   return (
     <TaskContext.Provider
@@ -154,10 +162,13 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
         error,
         status,
         toBase64,
+        allTask,
         setLoading: setInternalLoading,
         setError: setInternalError,
         setStatus: setInternalStatus,
         setToBase64: setInternalToBase64,
+        setAllTask: setInternalAllTask,
+        getAllTasks,
         getDate,
         createTask,
         encodeFile,

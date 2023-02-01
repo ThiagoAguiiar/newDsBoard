@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./Dashboard.module.scss";
 import { Button } from "../components/Forms/Button";
 import { Input } from "../components/Forms/Input";
@@ -21,9 +21,10 @@ export default function Dashboard() {
 
   const title = useForm();
 
-  React.useEffect(() => {
+  useEffect(() => {
     setIsOpenModal(false);
     setToken(data?.localToken);
+    task.getAllTasks(data?.localToken);
   }, []);
 
   // OnChange event para o input File
@@ -106,6 +107,25 @@ export default function Dashboard() {
 
         <div className={styles.listTask}>
           <p>Seus compromissos</p>
+          {task.allTask ? (
+            task.allTask.map((task, index) => (
+              <div
+                key={index}
+                className={`${styles.taskContainer} animate__animated  animate__fadeIn`}
+              >
+                {task.title}
+              </div>
+            ))
+          ) : (
+            <div className={styles.loading}>
+              <Loading
+                width="50px"
+                height="50px"
+                border="5px solid #ffffff"
+                borderTop="5px solid #0E38CC"
+              />
+            </div>
+          )}
         </div>
       </div>
     </>
