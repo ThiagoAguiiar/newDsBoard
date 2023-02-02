@@ -6,20 +6,16 @@ import { Link } from "react-router-dom";
 import { Button } from "../Forms/Button";
 import { ServicesButton } from "./ServicesButton";
 import { FcGoogle } from "react-icons/fc";
-import { ModalContext } from "../../context/ModalContext";
+import { useModal } from "../../context/ModalContext";
 import { useForm } from "../../hooks/useForm";
 import { Loading } from "../Other/Loading";
 import { useLogin } from "../../context/LoginContext";
 import { Error } from "../Forms/Error";
-
-interface ModalOpacityProps {
-  children: React.ReactNode;
-}
+import { ModalOpacity } from "../Modal/OpacityModal";
 
 export function LoginForm() {
   const login = useLogin();
-  // Fechando o Modal de Login
-  const { setIsOpenModal } = React.useContext(ModalContext);
+  const modal = useModal();
 
   // Validando os campos do formulário
   const email = useForm("email");
@@ -38,7 +34,7 @@ export function LoginForm() {
         <div className={styles.modalHead}>
           <div
             className={styles.btnClose}
-            onClick={() => setIsOpenModal(false)}
+            onClick={() => modal.setIsOpenModal(false)}
           >
             <GrClose size={20} />
           </div>
@@ -90,7 +86,7 @@ export function LoginForm() {
                   textDecoration: "none",
                   color: "#000000",
                 }}
-                onClick={() => setIsOpenModal(false)}
+                onClick={() => modal.setIsOpenModal(false)}
               >
                 Crie uma conta
               </Link>
@@ -102,9 +98,4 @@ export function LoginForm() {
       </div>
     </ModalOpacity>
   );
-}
-
-// Opacidade do fundo do Modal
-export function ModalOpacity({ children }: ModalOpacityProps): JSX.Element {
-  return <div className="modal-opacity">{children}</div>;
 }

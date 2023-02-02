@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { Account } from "./components/Account/Account";
+import { ToastContainer } from "react-toastify";
 import { Header } from "./components/Header/Header";
 import { LoginProvider } from "./context/LoginContext";
 import { ModalProvider } from "./context/ModalContext";
@@ -33,9 +33,7 @@ export function RoutesApp() {
                       <Dashboard />
                     </PrivateRoutes>
                   }
-                >
-                  <Route path="/dashboard/:id" element={<Account />} />
-                </Route>
+                ></Route>
                 <Route path="*" element={<Error404 />} />
               </Routes>
             </div>

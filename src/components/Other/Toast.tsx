@@ -1,6 +1,17 @@
-import { toast } from "react-toastify";
+import { toast, ToastOptions } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export function Toast(msg: string | null | undefined) {
-  return toast(msg);
+type FirebaseResponseType = {
+  msg: string;
+  response: string;
+};
+
+export function Toast(
+  responseFirebase: FirebaseResponseType,
+  options: ToastOptions
+) {
+  const { response, msg } = responseFirebase;
+
+  if (response === "Ok") return toast.success(msg, options);
+  else return toast.error(msg, options);
 }

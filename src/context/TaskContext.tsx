@@ -6,14 +6,9 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import React, {
-  createContext,
-  ReactNode,
-  useState,
-  useContext,
-  useEffect,
-} from "react";
-import { db } from "../api/Firebase";
+import { ref, uploadBytes } from "firebase/storage";
+import React, { createContext, ReactNode, useState, useContext } from "react";
+import { db, storage } from "../api/Firebase";
 
 type TaskContextType = {
   loading: boolean;
@@ -29,7 +24,7 @@ type TaskContextType = {
   getDate: () => string;
   createTask: (mewTask: NewTaskType) => Promise<void>;
   getAllTasks: (uid: string) => void;
-  encodeFile: (file: FileList) => void;
+  saveFiles: (file: FileList, uid: string) => void;
 };
 
 type TaskProviderType = {
@@ -58,6 +53,7 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
   const [toBase64, setToBase64] = useState<string | null | undefined>(null);
   const [allTask, setAllTask] = useState<null | DocumentData[]>(null);
 
+  // Proteção dos estados
   const setInternalLoading = (loading: boolean) => {
     setLoading(loading);
   };
@@ -84,27 +80,27 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
     return date.toLocaleString();
   };
 
-  // Encode File to base64
-  const encodeFile = (file: FileList) => {
-    const reader = new FileReader();
+  // Salvando documentos no Firebase Storage
+  const saveFiles = async (file: FileList, uid: string) => {
+    try {
+      setLoading(true);
+      setError(null);
 
-    reader.readAsDataURL(file[0]);
-    reader.onload = function (event) {
-      const base64 = event.target?.result?.toString();
-      setToBase64(base64);
-    };
+      const fileREF = ref(storage, `${uid}/${file[0].name}`);
+      const response = await uploadBytes(fileREF, file[0]);
+      console.log(response.ref.name);
+    } catch (e) {
+      console.log(e);
+      setError(e);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Decode File to base64
-  const decodeFile = (file: string) => {
-    return;
-  };
-
-  // Salvando tarefa no Firebase
+  // Salvando tarefa no Firebase Firestore
   const createTask = async (newTask: NewTaskType) => {
     try {
-      // Desestruturação dos valores odo objeto
-      const { date, title, uid, description, document } = newTask;
+      const { date, title, uid, description } = newTask;
 
       setLoading(true);
       setError(null);
@@ -112,7 +108,6 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
       await addDoc(collection(db, "Tarefas"), {
         title: title,
         description: description,
-        document: document,
         date: date,
         user: uid,
       });
@@ -150,10 +145,10 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
     }
   }
 
-  useEffect(() => {
-    const local = localStorage.getItem("token");
-    if (local) getAllTasks(JSON.parse(local));
-  }, [allTask]);
+  // Excluindo Tarefa
+  async function deleteTask(taskID: string) {
+    return;
+  }
 
   return (
     <TaskContext.Provider
@@ -171,7 +166,7 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
         getAllTasks,
         getDate,
         createTask,
-        encodeFile,
+        saveFiles,
       }}
     >
       {children}

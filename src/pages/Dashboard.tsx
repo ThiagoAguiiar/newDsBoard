@@ -3,35 +3,37 @@ import styles from "./Dashboard.module.scss";
 import { Button } from "../components/Forms/Button";
 import { Input } from "../components/Forms/Input";
 import { FiPaperclip } from "react-icons/fi";
-import { ModalContext } from "../context/ModalContext";
+import { useModal } from "../context/ModalContext";
 import { useForm } from "../hooks/useForm";
 import { Loading } from "../components/Other/Loading";
 import { useTask } from "../context/TaskContext";
 import { useData } from "../hooks/useData";
+import { AiOutlineCloudDownload } from "react-icons/ai";
+import { MdOutlineEdit } from "react-icons/md";
+import { BsTrash } from "react-icons/bs";
 
 export default function Dashboard() {
   // Hooks
   const task = useTask();
   const data = useData();
+  const modal = useModal();
 
-  const { setIsOpenModal } = React.useContext(ModalContext);
-  const [token, setToken] = React.useState<string | null>(null);
   const [description, setDescription] = React.useState<string | null>(null);
   const [file, setFile] = React.useState<boolean>(false);
 
   const title = useForm();
 
   useEffect(() => {
-    setIsOpenModal(false);
-    setToken(data?.localToken);
+    modal.setIsOpenModal(false);
     task.getAllTasks(data?.localToken);
   }, []);
 
   // OnChange event para o input File
   function getFile({ target }: React.ChangeEvent<HTMLInputElement>) {
     const { files } = target;
+
     if (files) {
-      task.encodeFile(files);
+      task.saveFiles(files, data?.localToken);
       setFile(true);
     }
   }
@@ -43,16 +45,16 @@ export default function Dashboard() {
     setDescription(target.value);
   };
 
-  // Enviando tarefa para o Banco de Dados
   function submitTask(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    // Enviando dados para o Firebase
     if (title.validate()) {
       task.createTask({
         title: title.value,
         date: task.getDate(),
         description: description,
-        uid: token,
-        document: task.toBase64,
+        uid: data?.localToken,
       });
     }
   }
@@ -106,14 +108,45 @@ export default function Dashboard() {
         </div>
 
         <div className={styles.listTask}>
-          <p>Seus compromissos</p>
+          <div
+            style={{ padding: ".5rem 0rem", borderBottom: "1px solid #eeeeee" }}
+          >
+            <p style={{ fontSize: "1.2rem", fontWeight: 500 }}>
+              Suas Atividades
+            </p>
+          </div>
           {task.allTask ? (
             task.allTask.map((task, index) => (
               <div
                 key={index}
                 className={`${styles.taskContainer} animate__animated  animate__fadeIn`}
               >
-                {task.title}
+                <div className={styles.text}>
+                  <p>{task.title}</p>
+                  <p>{task.description}</p>
+                </div>
+
+                <div className={styles.actions}>
+                  {task.document ? (
+                    <a href="" className={styles.document} download>
+                      <AiOutlineCloudDownload size={20} />
+                      Baixar
+                    </a>
+                  ) : (
+                    <span
+                      className={styles.document}
+                      style={{ cursor: "default" }}
+                    >
+                      Doc Vazio
+                    </span>
+                  )}
+                  <button className={styles.edit}>
+                    <MdOutlineEdit size={20} />
+                  </button>
+                  <button className={styles.delete}>
+                    <BsTrash size={20} />
+                  </button>
+                </div>
               </div>
             ))
           ) : (
