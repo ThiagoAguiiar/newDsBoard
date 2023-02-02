@@ -1,30 +1,31 @@
+import React, { createContext, ReactNode, useState, useContext } from "react";
 import {
-  addDoc,
   collection,
+  doc,
   DocumentData,
   getDocs,
   query,
+  setDoc,
   where,
 } from "firebase/firestore";
 import { ref, uploadBytes } from "firebase/storage";
-import React, { createContext, ReactNode, useState, useContext } from "react";
 import { db, storage } from "../api/Firebase";
+import { useData } from "../hooks/useData";
+import { randomCode } from "../function/RandomCode";
 
 type TaskContextType = {
   loading: boolean;
   setLoading: (loading: boolean) => void;
-  error: string | null | unknown;
+  error: string | null;
   setError: (error: string) => void;
-  status: StatusType | null;
-  setStatus: (status: StatusType) => void;
   toBase64: string | undefined | null;
   setToBase64: (data: string) => void;
   allTask: null | DocumentData[];
-  setAllTask: (data: DocumentData[]) => void;
   getDate: () => string;
   createTask: (mewTask: NewTaskType) => Promise<void>;
-  getAllTasks: (uid: string) => void;
-  saveFiles: (file: FileList, uid: string) => void;
+  getAllTasks: () => Promise<void>;
+  saveFiles: (file: FileList | null) => Promise<void>;
+  deleteTask: () => Promise<void>;
 };
 
 type TaskProviderType = {
@@ -32,26 +33,20 @@ type TaskProviderType = {
 };
 
 type NewTaskType = {
-  uid: string | null;
   title: string;
   description?: string | null;
-  date: string;
-  document?: string | null;
-};
-
-type StatusType = {
-  msg: string;
-  response: string;
 };
 
 export const TaskContext = createContext<TaskContextType | null>(null);
 
 export const TaskProvider = ({ children }: TaskProviderType) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null | unknown>(null);
-  const [status, setStatus] = useState<StatusType | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [toBase64, setToBase64] = useState<string | null | undefined>(null);
   const [allTask, setAllTask] = useState<null | DocumentData[]>(null);
+
+  const data = useData();
+  const id = randomCode(16);
 
   // Proteção dos estados
   const setInternalLoading = (loading: boolean) => {
@@ -62,16 +57,8 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
     setError(error);
   };
 
-  const setInternalStatus = (status: StatusType) => {
-    setStatus({ msg: status.msg, response: status.response });
-  };
-
   const setInternalToBase64 = (data: string) => {
     setToBase64(data);
-  };
-
-  const setInternalAllTask = (data: DocumentData[]) => {
-    setAllTask(data);
   };
 
   // Pegando a data que o usuário criou a tarefa
@@ -81,42 +68,36 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
   };
 
   // Salvando documentos no Firebase Storage
-  const saveFiles = async (file: FileList, uid: string) => {
+  const saveFiles = async (file: FileList | null) => {
     try {
-      setLoading(true);
       setError(null);
 
-      const fileREF = ref(storage, `${uid}/${file[0].name}`);
-      const response = await uploadBytes(fileREF, file[0]);
-      console.log(response.ref.name);
-    } catch (e) {
+      if (file) {
+        const filePath = ref(storage, `${data?.localToken}/${file[0].name}`);
+        await uploadBytes(filePath, file[0]);
+      }
+    } catch (e: any) {
       console.log(e);
       setError(e);
-    } finally {
-      setLoading(false);
     }
   };
 
-  // Salvando tarefa no Firebase Firestore
+  // Salvando Tarefa no Firebase Firestore
   const createTask = async (newTask: NewTaskType) => {
     try {
-      const { date, title, uid, description } = newTask;
+      const { title, description } = newTask;
 
       setLoading(true);
       setError(null);
 
-      await addDoc(collection(db, "Tarefas"), {
+      await setDoc(doc(db, "Tarefas", id), {
         title: title,
         description: description,
-        date: date,
-        user: uid,
+        date: getDate(),
+        user: data?.localToken,
+        idTarefa: id,
       });
-
-      setStatus({
-        msg: "Salvo com sucesso",
-        response: "Ok",
-      });
-    } catch (e: unknown) {
+    } catch (e: any) {
       console.log(e);
       setError(e);
     } finally {
@@ -124,17 +105,17 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
     }
   };
 
-  // Buscando os dados toda vez que o usuário logar
-  async function getAllTasks(uid: string) {
+  // Buscando as Tarefas do usuário
+  async function getAllTasks() {
     try {
       const collectionTask = query(
         collection(db, "Tarefas"),
-        where("user", "==", uid)
+        where("user", "==", data?.localToken)
       );
 
-      const result = await getDocs(collectionTask);
-      const response = result.docs.map((doc) => doc.data());
-      setAllTask(response);
+      const response = await getDocs(collectionTask);
+      const result = response.docs.map((doc) => doc.data());
+      setAllTask(result);
 
       setLoading(true);
       setError(null);
@@ -145,28 +126,34 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
     }
   }
 
-  // Excluindo Tarefa
-  async function deleteTask(taskID: string) {
-    return;
-  }
+  // Deletando tarefa do Firebase
+  const deleteTask = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+    } catch (e: any) {
+      console.log(e);
+      setError(e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <TaskContext.Provider
       value={{
         loading,
         error,
-        status,
         toBase64,
         allTask,
         setLoading: setInternalLoading,
         setError: setInternalError,
-        setStatus: setInternalStatus,
         setToBase64: setInternalToBase64,
-        setAllTask: setInternalAllTask,
         getAllTasks,
         getDate,
         createTask,
         saveFiles,
+        deleteTask,
       }}
     >
       {children}

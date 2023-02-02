@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./Dashboard.module.scss";
 import { Button } from "../components/Forms/Button";
 import { Input } from "../components/Forms/Input";
@@ -7,57 +7,58 @@ import { useModal } from "../context/ModalContext";
 import { useForm } from "../hooks/useForm";
 import { Loading } from "../components/Other/Loading";
 import { useTask } from "../context/TaskContext";
-import { useData } from "../hooks/useData";
 import { AiOutlineCloudDownload } from "react-icons/ai";
 import { MdOutlineEdit } from "react-icons/md";
 import { BsTrash } from "react-icons/bs";
 
 export default function Dashboard() {
-  // Hooks
-  const task = useTask();
-  const data = useData();
+  const {
+    createTask,
+    getAllTasks,
+    saveFiles,
+    loading,
+    allTask,
+    deleteTask,
+    error,
+  } = useTask();
+
   const modal = useModal();
-
-  const [description, setDescription] = React.useState<string | null>(null);
-  const [file, setFile] = React.useState<boolean>(false);
-
   const title = useForm();
+
+  const [description, setDescription] = useState<string | null>(null);
+  const [file, setFile] = useState<FileList | null>(null);
 
   useEffect(() => {
     modal.setIsOpenModal(false);
-    task.getAllTasks(data?.localToken);
-  }, []);
+    getAllTasks();
+  }, [allTask]);
 
-  // OnChange event para o input File
-  function getFile({ target }: React.ChangeEvent<HTMLInputElement>) {
+  // Input File Event
+  function getFiles({ target }: React.ChangeEvent<HTMLInputElement>) {
     const { files } = target;
-
-    if (files) {
-      task.saveFiles(files, data?.localToken);
-      setFile(true);
-    }
+    if (files) setFile(files);
   }
 
-  // Onchange event para o TextArea
-  const getDescription = ({
+  // Text Area Event
+  const getDescriptionValue = ({
     target,
   }: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDescription(target.value);
   };
 
-  function submitTask(e: React.FormEvent<HTMLFormElement>) {
+  const submitTask = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     // Enviando dados para o Firebase
     if (title.validate()) {
-      task.createTask({
+      createTask({
         title: title.value,
-        date: task.getDate(),
         description: description,
-        uid: data?.localToken,
       });
     }
-  }
+
+    saveFiles(file);
+  };
 
   return (
     <>
@@ -76,19 +77,19 @@ export default function Dashboard() {
                 id="desc-task"
                 className={styles.textArea}
                 placeholder="Descrição"
-                onChange={getDescription}
+                onChange={getDescriptionValue}
               />
               <div className={styles.actions}>
                 <label htmlFor="archive">
                   <FiPaperclip />
                   <p>{file ? "arquivo adicionado" : "arquivo"} </p>
                 </label>
-                <Input id="archive" type="file" onChange={getFile} />
+                <Input id="archive" type="file" onChange={getFiles} />
               </div>
               <div className={styles.button}>
                 <Button
                   value={
-                    task.loading ? (
+                    loading ? (
                       <Loading
                         width="25px"
                         height="25px"
@@ -105,6 +106,7 @@ export default function Dashboard() {
               </div>
             </form>
           </div>
+          <p>{error?.toString()}</p>
         </div>
 
         <div className={styles.listTask}>
@@ -115,11 +117,12 @@ export default function Dashboard() {
               Suas Atividades
             </p>
           </div>
-          {task.allTask ? (
-            task.allTask.map((task, index) => (
+
+          {allTask ? (
+            allTask.map((task, index) => (
               <div
                 key={index}
-                className={`${styles.taskContainer} animate__animated  animate__fadeIn`}
+                className={`${styles.taskContainer} animate__animated  animate__fadeInUp`}
               >
                 <div className={styles.text}>
                   <p>{task.title}</p>
@@ -127,23 +130,16 @@ export default function Dashboard() {
                 </div>
 
                 <div className={styles.actions}>
-                  {task.document ? (
-                    <a href="" className={styles.document} download>
-                      <AiOutlineCloudDownload size={20} />
-                      Baixar
-                    </a>
-                  ) : (
-                    <span
-                      className={styles.document}
-                      style={{ cursor: "default" }}
-                    >
-                      Doc Vazio
-                    </span>
-                  )}
+                  <a href="" className={styles.document} download>
+                    <AiOutlineCloudDownload size={20} />
+                  </a>
                   <button className={styles.edit}>
                     <MdOutlineEdit size={20} />
                   </button>
-                  <button className={styles.delete}>
+                  <button
+                    className={styles.delete}
+                    onClick={() => deleteTask()}
+                  >
                     <BsTrash size={20} />
                   </button>
                 </div>

@@ -8,4 +8,5 @@ export function useData() {
       localToken: JSON.parse(localToken),
       userData: JSON.parse(userData),
     };
+  else return;
 }
