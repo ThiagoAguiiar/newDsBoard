@@ -1,6 +1,13 @@
-import React, { createContext, ReactNode, useState, useContext } from "react";
+import React, {
+  createContext,
+  ReactNode,
+  useState,
+  useContext,
+  useEffect,
+} from "react";
 import {
   collection,
+  deleteDoc,
   doc,
   DocumentData,
   getDocs,
@@ -25,7 +32,7 @@ type TaskContextType = {
   createTask: (mewTask: NewTaskType) => Promise<void>;
   getAllTasks: () => Promise<void>;
   saveFiles: (file: FileList | null) => Promise<void>;
-  deleteTask: () => Promise<void>;
+  deleteTask: (idTarefa: string) => Promise<void>;
 };
 
 type TaskProviderType = {
@@ -127,8 +134,9 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
   }
 
   // Deletando tarefa do Firebase
-  const deleteTask = async () => {
+  const deleteTask = async (idTarefa: string) => {
     try {
+      await deleteDoc(doc(db, "Tarefas", idTarefa));
       setLoading(true);
       setError(null);
     } catch (e: any) {
@@ -138,6 +146,10 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    getAllTasks();
+  }, [allTask]);
 
   return (
     <TaskContext.Provider

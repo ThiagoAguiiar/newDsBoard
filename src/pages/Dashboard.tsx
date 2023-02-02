@@ -12,15 +12,8 @@ import { MdOutlineEdit } from "react-icons/md";
 import { BsTrash } from "react-icons/bs";
 
 export default function Dashboard() {
-  const {
-    createTask,
-    getAllTasks,
-    saveFiles,
-    loading,
-    allTask,
-    deleteTask,
-    error,
-  } = useTask();
+  const { createTask, getAllTasks, saveFiles, loading, allTask, deleteTask } =
+    useTask();
 
   const modal = useModal();
   const title = useForm();
@@ -31,7 +24,7 @@ export default function Dashboard() {
   useEffect(() => {
     modal.setIsOpenModal(false);
     getAllTasks();
-  }, [allTask]);
+  }, [getAllTasks]);
 
   // Input File Event
   function getFiles({ target }: React.ChangeEvent<HTMLInputElement>) {
@@ -106,7 +99,6 @@ export default function Dashboard() {
               </div>
             </form>
           </div>
-          <p>{error?.toString()}</p>
         </div>
 
         <div className={styles.listTask}>
@@ -125,8 +117,8 @@ export default function Dashboard() {
                 className={`${styles.taskContainer} animate__animated  animate__fadeInUp`}
               >
                 <div className={styles.text}>
-                  <p>{task.title}</p>
-                  <p>{task.description}</p>
+                  <p className={styles.title}>{task.title}</p>
+                  <p className={styles.description}>{task.description}</p>
                 </div>
 
                 <div className={styles.actions}>
@@ -138,7 +130,7 @@ export default function Dashboard() {
                   </button>
                   <button
                     className={styles.delete}
-                    onClick={() => deleteTask()}
+                    onClick={() => deleteTask(task.idTarefa)}
                   >
                     <BsTrash size={20} />
                   </button>
