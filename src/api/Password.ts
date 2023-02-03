@@ -1,3 +1,3 @@
-export function ForgotPassword() {
+export async function forgotPassword() {
   return;
 }

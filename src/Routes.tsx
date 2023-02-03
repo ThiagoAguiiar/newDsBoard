@@ -8,6 +8,7 @@ import { TaskProvider } from "./context/TaskContext";
 import Dashboard from "./pages/Dashboard";
 import Error404 from "./pages/Error404";
 import Home from "./pages/Home";
+import Password from "./pages/Password";
 import Register from "./pages/Register";
 
 interface PrivateRoutesProps {
@@ -25,6 +26,7 @@ export function RoutesApp() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/forgot-password" element={<Password />} />
 
                 <Route
                   path="/dashboard"

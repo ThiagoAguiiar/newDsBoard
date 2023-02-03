@@ -50,7 +50,7 @@ export function LoginForm() {
             {...password}
           />
           <div className={styles.fgtPassword}>
-            <Link to="/">Esqueceu sua senha?</Link>
+            <Link to="/forgot-password">Esqueceu sua senha?</Link>
           </div>
           <div style={{ marginTop: "1.2rem" }}>
             <Button

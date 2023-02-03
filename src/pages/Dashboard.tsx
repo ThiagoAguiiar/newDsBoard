@@ -10,6 +10,8 @@ import { useTask } from "../context/TaskContext";
 import { AiOutlineCloudDownload } from "react-icons/ai";
 import { MdOutlineEdit } from "react-icons/md";
 import { BsTrash } from "react-icons/bs";
+import { Delete } from "../components/Modal/Delete";
+import { Link } from "react-router-dom";
 
 export default function Dashboard() {
   const { createTask, getAllTasks, saveFiles, loading, allTask, deleteTask } =
@@ -125,12 +127,19 @@ export default function Dashboard() {
                   <a href="" className={styles.document} download>
                     <AiOutlineCloudDownload size={20} />
                   </a>
-                  <button className={styles.edit}>
-                    <MdOutlineEdit size={20} />
-                  </button>
+                  <Link to={task.idTarefa}>
+                    <button className={styles.edit}>
+                      <MdOutlineEdit size={20} />
+                    </button>
+                  </Link>
                   <button
                     className={styles.delete}
-                    onClick={() => deleteTask(task.idTarefa)}
+                    onClick={() => {
+                      modal.setIsDeleteModal(true);
+                      modal.setData({
+                        deleteAll: () => deleteTask(task.idTarefa),
+                      });
+                    }}
                   >
                     <BsTrash size={20} />
                   </button>
@@ -149,6 +158,8 @@ export default function Dashboard() {
           )}
         </div>
       </div>
+
+      {modal.isDeleteModal && <Delete />}
     </>
   );
 }

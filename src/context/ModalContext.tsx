@@ -1,4 +1,5 @@
-import React, { useContext } from "react";
+import { DocumentData } from "firebase/firestore";
+import React, { useContext, useState } from "react";
 
 interface IProvider {
   children: JSX.Element;
@@ -8,28 +9,45 @@ interface IProvider {
 interface IContext {
   isOpenModal: boolean;
   setIsOpenModal: (state: boolean) => void;
+  isDeleteModal: boolean;
+  setIsDeleteModal: (state: boolean) => void;
+  data: DataType | null;
+  setData: (state: DataType) => void;
 }
 
-// Valores iniciais dos estados do componente
-const initialValue = {
-  isOpenModal: false,
-  setIsOpenModal: () => undefined,
+type DataType = {
+  deleteAll: () => void;
 };
 
-export const ModalContext = React.createContext<IContext>(initialValue);
+export const ModalContext = React.createContext<IContext | null>(null);
 
 export const ModalProvider = ({ children }: IProvider) => {
-  const [isOpenModal, setIsOpenModal] = React.useState(
-    initialValue.isOpenModal
-  );
+  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+  const [isDeleteModal, setIsDeleteModal] = useState<boolean>(false);
+  const [data, setData] = useState<null | DataType>(null);
 
   const setInternalIsOpenModal = (value: boolean) => {
     setIsOpenModal(value);
   };
 
+  const setInternalIsDeleteModal = (value: boolean) => {
+    setIsDeleteModal(value);
+  };
+
+  const setInternalData = (value: DataType) => {
+    if (value) setData(value);
+  };
+
   return (
     <ModalContext.Provider
-      value={{ isOpenModal, setIsOpenModal: setInternalIsOpenModal }}
+      value={{
+        isOpenModal,
+        setIsOpenModal: setInternalIsOpenModal,
+        setIsDeleteModal: setInternalIsDeleteModal,
+        isDeleteModal,
+        data,
+        setData: setInternalData,
+      }}
     >
       {children}
     </ModalContext.Provider>
