@@ -1,4 +1,3 @@
-import { DocumentData } from "firebase/firestore";
 import React, { useContext, useState } from "react";
 
 interface IProvider {
@@ -11,20 +10,13 @@ interface IContext {
   setIsOpenModal: (state: boolean) => void;
   isDeleteModal: boolean;
   setIsDeleteModal: (state: boolean) => void;
-  data: DataType | null;
-  setData: (state: DataType) => void;
 }
-
-type DataType = {
-  deleteAll: () => void;
-};
 
 export const ModalContext = React.createContext<IContext | null>(null);
 
 export const ModalProvider = ({ children }: IProvider) => {
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [isDeleteModal, setIsDeleteModal] = useState<boolean>(false);
-  const [data, setData] = useState<null | DataType>(null);
 
   const setInternalIsOpenModal = (value: boolean) => {
     setIsOpenModal(value);
@@ -34,10 +26,6 @@ export const ModalProvider = ({ children }: IProvider) => {
     setIsDeleteModal(value);
   };
 
-  const setInternalData = (value: DataType) => {
-    if (value) setData(value);
-  };
-
   return (
     <ModalContext.Provider
       value={{
@@ -45,8 +33,6 @@ export const ModalProvider = ({ children }: IProvider) => {
         setIsOpenModal: setInternalIsOpenModal,
         setIsDeleteModal: setInternalIsDeleteModal,
         isDeleteModal,
-        data,
-        setData: setInternalData,
       }}
     >
       {children}

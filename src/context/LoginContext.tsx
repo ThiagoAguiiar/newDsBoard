@@ -13,12 +13,17 @@ import {
 } from "firebase/auth";
 import { app } from "../api/Firebase";
 import { useNavigate } from "react-router-dom";
+import { DocumentData } from "firebase/firestore";
 
 type LoginContextType = {
   error: string | null | unknown;
   setError: (error: string) => void;
   loading: boolean;
   setLoading: (loading: boolean) => void;
+  token: string | null;
+  setToken: (token: string) => void;
+  data: DocumentData | null;
+  setData: (data: DocumentData) => void;
   loginWithEmailPassword: (email: string, password: string) => void;
   loginWithGoogleAccount: () => void;
   logout: () => void;
@@ -33,14 +38,23 @@ export const LoginContext = createContext<LoginContextType | null>(null);
 
 // Provider
 export const LoginProvider = ({ children }: LoginProviderProps) => {
+  const [token, setToken] = React.useState<string | null>(null);
   const [error, setError] = useState<string | unknown | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [data, setData] = React.useState<DocumentData | null>(null);
 
-  // Auto Login
+  // Auto Login e buscando dados no LocalStorage
   React.useEffect(() => {
     function autoLogin() {
-      const local = localStorage.getItem("token");
-      if (local) navigate("/dashboard");
+      const userToken = localStorage.getItem("token");
+      const userData = localStorage.getItem("user-data");
+
+      if (userToken) {
+        navigate("/dashboard");
+        setInternalToken(JSON.parse(userToken));
+      }
+
+      if (userData) setData(JSON.parse(userData));
     }
 
     autoLogin();
@@ -51,13 +65,11 @@ export const LoginProvider = ({ children }: LoginProviderProps) => {
   const navigate = useNavigate();
   const provider = new GoogleAuthProvider();
 
-  const setInternalError = (error: string) => {
-    setError(error);
-  };
-
-  const setInternalLoading = (loading: boolean) => {
-    setLoading(loading);
-  };
+  // Proteção dos Estados
+  const setInternalError = (error: string) => setError(error);
+  const setInternalLoading = (loading: boolean) => setLoading(loading);
+  const setInternalToken = (token: string) => setToken(token);
+  const setInternalData = (data: DocumentData) => setData(data);
 
   // Login com Email e Senha
   const loginWithEmailPassword = async (email: string, password: string) => {
@@ -130,6 +142,10 @@ export const LoginProvider = ({ children }: LoginProviderProps) => {
         loginWithGoogleAccount,
         setLoading: setInternalLoading,
         logout,
+        token,
+        setToken: setInternalToken,
+        data,
+        setData: setInternalData,
       }}
     >
       {children}

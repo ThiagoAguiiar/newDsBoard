@@ -6,9 +6,11 @@ import { GrClose } from "react-icons/gr";
 import { useModal } from "../../context/ModalContext";
 import { Button } from "../Forms/Button";
 import fileImg from "../../img/file.png";
+import { useTask } from "../../context/TaskContext";
 
 export function Delete() {
   const modal = useModal();
+  const { getAllTasks } = useTask();
 
   return (
     <ModalOpacity>
@@ -34,8 +36,8 @@ export function Delete() {
           <button
             className={`${btn.button} ${styles.confirm}`}
             onClick={() => {
-              modal.data;
               modal.setIsDeleteModal(false);
+              getAllTasks();
             }}
           >
             Confirmar

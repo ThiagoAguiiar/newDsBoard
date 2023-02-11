@@ -26,7 +26,7 @@ export default function Dashboard() {
   useEffect(() => {
     modal.setIsOpenModal(false);
     getAllTasks();
-  }, [getAllTasks]);
+  }, []);
 
   // Input File Event
   function getFiles({ target }: React.ChangeEvent<HTMLInputElement>) {
@@ -52,6 +52,7 @@ export default function Dashboard() {
       });
     }
 
+    getAllTasks();
     saveFiles(file);
   };
 
@@ -107,7 +108,12 @@ export default function Dashboard() {
           <div
             style={{ padding: ".5rem 0rem", borderBottom: "1px solid #eeeeee" }}
           >
-            <p style={{ fontSize: "1.2rem", fontWeight: 500 }}>
+            <p
+              style={{
+                fontSize: "1.2rem",
+                fontWeight: 500,
+              }}
+            >
               Suas Atividades
             </p>
           </div>
@@ -136,9 +142,7 @@ export default function Dashboard() {
                     className={styles.delete}
                     onClick={() => {
                       modal.setIsDeleteModal(true);
-                      modal.setData({
-                        deleteAll: () => deleteTask(task.idTarefa),
-                      });
+                      deleteTask(task.idTarefa);
                     }}
                   >
                     <BsTrash size={20} />

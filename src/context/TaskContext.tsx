@@ -17,7 +17,6 @@ import {
 } from "firebase/firestore";
 import { ref, uploadBytes } from "firebase/storage";
 import { db, storage } from "../api/Firebase";
-import { useData } from "../hooks/useData";
 import { randomCode } from "../function/RandomCode";
 
 type TaskContextType = {
@@ -51,8 +50,13 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
   const [error, setError] = useState<string | null>(null);
   const [toBase64, setToBase64] = useState<string | null | undefined>(null);
   const [allTask, setAllTask] = useState<null | DocumentData[]>(null);
+  const [token, setToken] = useState<string | null>(null);
 
-  const data = useData();
+  useEffect(() => {
+    const userToken = localStorage.getItem("token");
+    if (userToken) setToken(JSON.parse(userToken));
+  }, []);
+
   const id = randomCode(16);
 
   // Proteção dos estados
@@ -80,7 +84,7 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
       setError(null);
 
       if (file) {
-        const filePath = ref(storage, `${data?.localToken}/${file[0].name}`);
+        const filePath = ref(storage, `${token}/${file[0].name}`);
         await uploadBytes(filePath, file[0]);
       }
     } catch (e: any) {
@@ -101,7 +105,7 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
         title: title,
         description: description,
         date: getDate(),
-        user: data?.localToken,
+        user: token,
         idTarefa: id,
       });
     } catch (e: any) {
@@ -117,7 +121,7 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
     try {
       const collectionTask = query(
         collection(db, "Tarefas"),
-        where("user", "==", data?.localToken)
+        where("user", "==", token)
       );
 
       const response = await getDocs(collectionTask);
@@ -128,6 +132,7 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
       setError(null);
     } catch (e: any) {
       setError(e);
+      console.log(e);
     } finally {
       setLoading(false);
     }
@@ -146,10 +151,6 @@ export const TaskProvider = ({ children }: TaskProviderType) => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    getAllTasks();
-  }, [allTask]);
 
   return (
     <TaskContext.Provider
