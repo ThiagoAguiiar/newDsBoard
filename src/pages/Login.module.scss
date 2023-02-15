@@ -1,0 +1,104 @@
+.container {
+    height: calc(100vh - 70px);
+    margin: 0 auto !important;
+    align-items: center;
+}
+
+.background {
+    width: 100%;
+    height: 100%;
+
+    div {
+        height: 100%;
+        width: 100%;
+        background: url(../img/bgLogin.svg);
+    }
+}
+
+form {
+    padding: 2rem !important;
+
+    h1 {
+        color: #000;
+        font-size: 2.2rem;
+        font-weight: 600;
+    }
+}
+
+.input,
+.button {
+    width: 75%;
+    margin: 1rem 0rem !important;
+}
+
+.google {
+    margin-top: 1rem !important;
+
+    div {
+        width: 100%;
+        height: 45px;
+        border: 1px solid #e9e9e9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: .5rem;
+
+        p {
+            font-weight: 500;
+        }
+    }
+
+    div:hover {
+        background: #e9e9e9;
+        cursor: pointer;
+    }
+}
+
+.forgot {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 1rem !important;
+    font-size: 13px;
+    font-weight: 500;
+    margin-left: auto !important;
+    cursor: pointer;
+}
+
+.createAccount {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer;
+    padding-top: 1rem !important;
+    font-size: 15px;
+    font-weight: 500;
+    color: #0E38CC;
+}
+
+.login {
+    margin-top: 1rem !important;
+    display: flex;
+    align-items: center;
+    gap: .3rem;
+    
+    a {
+        font-weight: 500;
+        color: #0E38CC;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .container {
+        height: auto;
+        margin: 2rem 0 !important;
+    }
+
+    .input,
+    .button {
+        width: 100%;
+    }
+
+    .background {
+        display: none;
+    }
+}

@@ -1,53 +1,49 @@
-import React from "react";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import { Header } from "./components/Header/Header";
-import { LoginProvider } from "./context/LoginContext";
-import { ModalProvider } from "./context/ModalContext";
-import { TaskProvider } from "./context/TaskContext";
-import Dashboard from "./pages/Dashboard";
-import Error404 from "./pages/Error404";
-import Home from "./pages/Home";
-import Password from "./pages/Password";
-import Register from "./pages/Register";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Adicionar from "./Components/Dashboard/Adicionar";
+import Documents from "./Components/Dashboard/Documents";
+import Tarefas from "./Components/Dashboard/Tarefas";
+import Header from "./Components/Header/Header";
+import { UserProvider } from "./Context/UserContext";
+import Dashboard from "./Pages/Dashboard";
+import ForgotPassword from "./Pages/ForgotPassword";
+import Home from "./Pages/Home";
+import Login from "./Pages/Login";
+import Register from "./Pages/Register";
 
-interface PrivateRoutesProps {
+type DashboardType = {
   children: JSX.Element;
-}
+};
 
-export function RoutesApp() {
+export const RoutesApp = () => {
   return (
     <BrowserRouter>
-      <ModalProvider>
-        <LoginProvider>
-          <TaskProvider>
-            <div className="main">
-              <Header />
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/forgot-password" element={<Password />} />
-
-                <Route
-                  path="/dashboard"
-                  element={
-                    <PrivateRoutes>
-                      <Dashboard />
-                    </PrivateRoutes>
-                  }
-                ></Route>
-                <Route path="*" element={<Error404 />} />
-              </Routes>
-            </div>
-          </TaskProvider>
-        </LoginProvider>
-      </ModalProvider>
+      <UserProvider>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/password" element={<ForgotPassword />} />
+          <Route
+            path="/dashboard"
+            element={
+              <DashboardAcess>
+                <Dashboard />
+              </DashboardAcess>
+            }
+          >
+            <Route path="" element={<Adicionar />} />
+            <Route path="adicionar" element={<Adicionar />} />
+            <Route path="tarefas" element={<Tarefas />} />
+            <Route path="documentos" element={<Documents />} />
+          </Route>
+        </Routes>
+      </UserProvider>
     </BrowserRouter>
   );
-}
+};
 
-// Rota protegida - Liberando acesso ao dashboard
-function PrivateRoutes({ children }: PrivateRoutesProps): JSX.Element {
+const DashboardAcess = ({ children }: DashboardType) => {
   const token = localStorage.getItem("token");
-  return token ? children : <Navigate to="/" />;
-}
+  return token ? children : <Navigate to="/login" />;
+};

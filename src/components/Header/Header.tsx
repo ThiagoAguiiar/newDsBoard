@@ -1,45 +1,54 @@
-import React from "react";
-import { ModalContext, useModal } from "../../context/ModalContext";
-import { Profile } from "../Dashboard/Profile";
-import { AuthButton } from "../Login/AuthButton";
-import { LoginForm } from "../Login/LoginForm";
-import { Logo } from "./Logo";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { useUserContext } from "../../Context/UserContext";
+import Profile from "../Profile/Profile";
 import styles from "./Header.module.scss";
 
-export function Header() {
-  // Mostrando o Formulário de Login
-  const modal = useModal();
-  const token = localStorage.getItem("token");
+type BackgroundType = {
+  background: string;
+  color: string;
+};
 
-  function showModal() {
-    modal.setIsOpenModal(true);
-  }
+const Header = () => {
+  const { login, autoLogin, getUserData } = useUserContext();
+  const [background, setBackground] = useState<BackgroundType>({
+    background: "#fff",
+    color: "#000",
+  });
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    autoLogin();
+    getUserData();
+  }, []);
+
+  useEffect(() => {
+    if (pathname === "/")
+      setBackground({
+        background: "#000",
+        color: "#fff",
+      });
+    else
+      setBackground({
+        background: "#fff",
+        color: "#000",
+      });
+  }, [pathname]);
 
   return (
-    <>
-      <header className={styles.header}>
-        <nav>
-          <Logo
-            fontSize="1.8rem"
-            color="#0151eb"
-            disabledLink={token ? true : false}
-          />
-
-          {token ? (
-            <Profile />
-          ) : (
-            <AuthButton
-              value="Entrar"
-              background="#ffffffff"
-              border="1px solid #0151eb"
-              radius=".2rem"
-              onClick={showModal}
-            />
-          )}
-        </nav>
-      </header>
-
-      {modal.isOpenModal && <LoginForm />}
-    </>
+    <header className={styles.header} style={background && { ...background }}>
+      <nav>
+        <div className={styles.logo}>
+          <Link to={login ? "/dashboard" : "/"}>
+            <span>DsBoard</span>
+          </Link>
+        </div>
+        <div className={styles.login}>
+          {login ? <Profile /> : <Link to="/login">Entrar</Link>}
+        </div>
+      </nav>
+    </header>
   );
-}
+};
+
+export default Header;

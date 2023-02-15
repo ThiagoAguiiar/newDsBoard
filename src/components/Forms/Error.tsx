@@ -1,10 +1,9 @@
-import React from "react";
 import styles from "./Error.module.scss";
 
-interface ErrorProps {
+type ErrorTypeProps = {
   error: string | null | undefined;
-}
+};
 
-export function Error({ error }: ErrorProps) {
+export function Error({ error }: ErrorTypeProps) {
   return <p className={styles.error}>{error}</p>;
 }

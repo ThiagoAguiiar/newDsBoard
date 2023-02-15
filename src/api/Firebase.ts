@@ -1,17 +1,21 @@
 import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCkk6pdN8ov2zEn9rKOE3gYDJZvbr8k4WQ",
-  authDomain: "dsboard-task-manager.firebaseapp.com",
-  projectId: "dsboard-task-manager",
-  storageBucket: "dsboard-task-manager.appspot.com",
-  messagingSenderId: "1066431990239",
-  appId: "1:1066431990239:web:dbe7b2aa3f328d3a911c6a",
-  measurementId: "G-Y73EDE98L1",
+  apiKey: "AIzaSyBAOiyDpjqxtcZQINV6h1HnKi3LruAsKtc",
+  authDomain: "dsboard-4da67.firebaseapp.com",
+  projectId: "dsboard-4da67",
+  storageBucket: "dsboard-4da67.appspot.com",
+  messagingSenderId: "757019631397",
+  appId: "1:757019631397:web:93e2a173787eafe3ee04cc",
+  measurementId: "G-1NF12Z0ZQB",
 };
 
+// Initialize Firebase
 export const app = initializeApp(firebaseConfig);
+export const analytics = getAnalytics(app);
 export const db = getFirestore(app);
-export const storage = getStorage(app);
+export const auth = getAuth(app);
+export const provider = new GoogleAuthProvider();

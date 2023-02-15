@@ -1,18 +1,24 @@
 .button {
   width: 100%;
   height: 100%;
-  background: #0E38CC;
+  background: #0e38cc;
   border: none;
-  padding: 10px 20px;
+  padding: 10px 20px !important;
   color: #ffffff;
   font-weight: 500;
-  transition: .2s all;
+  transition: 0.2s all;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.button:hover {
-  cursor: pointer;
-  background: #0a2ba3;
+.button:hover, 
+.button:focus {
+    cursor: pointer;
+    background: #0a2ba3;
+}
+
+.button:disabled {
+  opacity: .3;
+  cursor: default;
 }

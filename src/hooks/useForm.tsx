@@ -8,13 +8,13 @@ const validation = {
   },
 };
 
-// Recebe um tipo (type input)
-export function useForm(type?: keyof typeof validation) {
+// Recebe um tipo que pertence a chave do tipo validation
+const useForm = (type?: keyof typeof validation) => {
   const [value, setValue] = React.useState<string>("");
   const [error, setError] = React.useState<string | null>(null);
 
   // Validação dos valores dos inputs
-  function validate(value: string): boolean {
+  const validate = (value: string): boolean => {
     if (value.length === 0) {
       setError("Preencha o campo corretamente");
       return false;
@@ -25,16 +25,16 @@ export function useForm(type?: keyof typeof validation) {
       setError(null);
       return true;
     }
-  }
+  };
 
   // onChange Event Input
-  function onChange(e: React.ChangeEvent<HTMLInputElement>) {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (error) {
       validate(e.target.value);
     }
 
     setValue(e.target.value);
-  }
+  };
 
   return {
     value,
@@ -44,4 +44,6 @@ export function useForm(type?: keyof typeof validation) {
     onBlur: () => validate(value),
     validate: () => validate(value),
   };
-}
+};
+
+export default useForm;

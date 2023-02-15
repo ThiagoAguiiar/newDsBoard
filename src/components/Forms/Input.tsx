@@ -1,9 +1,8 @@
-import React from "react";
 import { ChangeEventHandler, FocusEventHandler } from "react";
 import { Error } from "./Error";
 import styles from "./Input.module.scss";
 
-interface InputProps {
+type InputTypeProps = {
   value?: string;
   id: string;
   placeholder?: string;
@@ -11,9 +10,9 @@ interface InputProps {
   error?: string | null;
   onBlur?: FocusEventHandler<HTMLInputElement>;
   onChange?: ChangeEventHandler<HTMLInputElement>;
-}
+};
 
-export function Input({
+export const Input = ({
   value,
   id,
   placeholder,
@@ -21,7 +20,7 @@ export function Input({
   error,
   onBlur,
   onChange,
-}: InputProps): JSX.Element {
+}: InputTypeProps) => {
   return (
     <div className={styles.container}>
       <input
@@ -37,4 +36,4 @@ export function Input({
       <Error error={error} />
     </div>
   );
-}
+};

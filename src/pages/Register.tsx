@@ -1,57 +1,59 @@
-import React from "react";
-import { Button } from "../components/Forms/Button";
-import { Input } from "../components/Forms/Input";
-import { useModal } from "../context/ModalContext";
-import { useForm } from "../hooks/useForm";
-import styles from "./Register.module.scss";
+import useForm from "../Hooks/useForm";
+import styles from "./Login.module.scss";
+import { Button } from "../Components/Forms/Button";
+import { Error } from "../Components/Forms/Error";
+import { Input } from "../Components/Forms/Input";
+import { useUserContext } from "../Context/UserContext";
+import { FormEvent } from "react";
+import { Link } from "react-router-dom";
 
-export default function Register() {
+const Register = () => {
+  const { error, createAccount, loading } = useUserContext();
+  const { createAccountLoading } = loading;
+
   const email = useForm("email");
   const password = useForm();
-  const modal = useModal();
 
-  const inputFields = [
-    {
-      id: "email",
-      placeholder: "Email",
-      type: "text",
-      other: email,
-    },
-    {
-      id: "password",
-      placeholder: "Senha",
-      type: "password",
-      other: password,
-    },
-  ];
+  const registerUser = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (email.validate() && password.validate())
+      createAccount(email.value, password.value);
+  };
 
   return (
-    <div className={styles.container}>
-      <form className={`${styles.form} animateLeft`}>
-        <div className={styles.title}>
-          <h1>Criar uma nova conta</h1>
-        </div>
-        <div className={styles.body}>
-          {inputFields.map((item, index) => (
-            <div key={index} style={{ marginBottom: ".5rem" }}>
-              <Input
-                id={item.id}
-                placeholder={item.placeholder}
-                type={item.type}
-                {...item.other}
-              />
-            </div>
-          ))}
+    <div className={`${styles.container} row`}>
+      <div className={`${styles.background} col-md-6 col-12`}>
+        <div></div>
+      </div>
 
-          <div style={{ marginTop: "1.2rem" }}>
-            <Button value="Cadastrar" borderRadius="3px" fontSize="1rem" />
-          </div>
+      <form className="col-md-6 col-12 animateForm" onSubmit={registerUser}>
+        <h1>Criar uma conta</h1>
+        <div className={styles.input}>
+          <Input id="email" type="text" placeholder="Email" {...email} />
         </div>
-        <p className={styles.haveAccount}>
-          Possui uma conta?
-          <span onClick={() => modal.setIsOpenModal(true)}> Fazer login</span>
-        </p>
+        <div className={styles.input}>
+          <Input
+            id="password"
+            type="password"
+            placeholder="Senha"
+            {...password}
+          />
+        </div>
+        <div className={styles.button}>
+          <Button
+            value={createAccountLoading ? "Carregando..." : "Criar conta"}
+            borderRadius="3px"
+          />
+          <span className={styles.login}>
+            Possui uma conta?
+            <Link to="/login">Fazer login</Link>
+          </span>
+          <Error error={error} />
+        </div>
       </form>
     </div>
   );
-}
+};
+
+export default Register;

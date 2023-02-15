@@ -1,7 +1,8 @@
-import React from "react";
 import { RoutesApp } from "./Routes";
+import { useUserContext } from "./Context/UserContext";
+import { useEffect } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "./global.scss";
-import "animate.css";
 
 export default function App(): JSX.Element {
   return <RoutesApp />;
