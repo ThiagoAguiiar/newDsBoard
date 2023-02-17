@@ -3,6 +3,7 @@ import Adicionar from "./Components/Dashboard/Adicionar";
 import Documents from "./Components/Dashboard/Documents";
 import Tarefas from "./Components/Dashboard/Tarefas";
 import Header from "./Components/Header/Header";
+import { TarefasProvider } from "./Context/TarefasContext";
 import { UserProvider } from "./Context/UserContext";
 import Dashboard from "./Pages/Dashboard";
 import ForgotPassword from "./Pages/ForgotPassword";
@@ -18,26 +19,28 @@ export const RoutesApp = () => {
   return (
     <BrowserRouter>
       <UserProvider>
-        <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/password" element={<ForgotPassword />} />
-          <Route
-            path="/dashboard"
-            element={
-              <DashboardAcess>
-                <Dashboard />
-              </DashboardAcess>
-            }
-          >
-            <Route path="" element={<Adicionar />} />
-            <Route path="adicionar" element={<Adicionar />} />
-            <Route path="tarefas" element={<Tarefas />} />
-            <Route path="documentos" element={<Documents />} />
-          </Route>
-        </Routes>
+        <TarefasProvider>
+          <Header />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/password" element={<ForgotPassword />} />
+            <Route
+              path="/dashboard"
+              element={
+                <DashboardAcess>
+                  <Dashboard />
+                </DashboardAcess>
+              }
+            >
+              <Route path="" element={<Adicionar />} />
+              <Route path="adicionar" element={<Adicionar />} />
+              <Route path="tarefas" element={<Tarefas />} />
+              <Route path="documentos" element={<Documents />} />
+            </Route>
+          </Routes>
+        </TarefasProvider>
       </UserProvider>
     </BrowserRouter>
   );
