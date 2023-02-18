@@ -1,12 +1,19 @@
 .container {
   width: 100%;
+  height: calc(100vh - 200px);
   display: flex;
   align-items: center;
 }
 
 .form {
+  margin-top: 1rem !important;
+  padding: 0 !important;
+
   h2 {
-    margin-bottom: 1rem !important;
+    padding: .5rem 0rem !important;
+    color: #000;
+    font-size: 1.5rem;
+    font-weight: 600;
   }
 
   textarea {
@@ -17,16 +24,24 @@
     border-radius: 5px;
     outline: none !important;
     transition: 0.1s;
+    border-color: #fff !important;
     resize: none;
+    background: #EEEEEE;
+    color: #5b5b5b;
   }
 
   textarea:focus,
   textarea:hover {
     box-shadow: 0 0 0 4px #002aff57;
-    border: 1px solid #002bff;
+    border: 1px solid #002bff !important;
   }
 
   .button {
     margin-top: 1rem !important;
+  }
+
+  .status {
+    margin-top: 1rem !important;
+    transition: .2s;
   }
 }

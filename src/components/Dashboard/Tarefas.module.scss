@@ -1,0 +1,73 @@
+.container {
+  width: 100%;
+  height: calc(100vh - 200px) !important;
+  margin-top: 1rem !important;
+
+  .tasks {
+    width: 80%;
+    height: calc(100vh - 200px);
+    overflow-y: scroll;
+    padding: 2rem 2rem 2rem 0 !important;
+  }
+
+  .item {
+    width: 100%;
+    height: 80px;
+    border-bottom: 1px solid #eeeeee;
+    padding: 1rem !important;
+
+    h1 {
+      font-size: 1.2rem;
+      color: #333;
+      font-weight: 600;
+    }
+
+    .description {
+      padding-top: 0.5rem !important;
+      white-space: nowrap;
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .actions {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 1rem;
+
+      button {
+        width: 45px;
+        height: 45px;
+        border: none;
+        outline: none;
+        background: #eeeeee;
+        border-radius: 5px;
+        transition: 0.1s;
+      }
+
+      button > * {
+        font-size: 1.5rem;
+      }
+
+      .edit:hover,
+      .edit:focus {
+        color: #002bff;
+        box-shadow: 0 0 0 4px #002aff57;
+        border: 1px solid #002bff;
+      }
+
+      .delete:hover,
+      .delete:focus {
+        box-shadow: 0 0 0 4px #ef53505d;
+        border: 1px solid #f02d3a;
+        color: #f02d3a;
+      }
+    }
+  }
+}
+
+.container::-webkit-scrollbar-track {
+  background: red !important;
+}

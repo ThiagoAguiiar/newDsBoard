@@ -5,13 +5,17 @@ import { BsGrid } from "react-icons/bs";
 import styles from "./Dashboard.module.scss";
 import { useUserContext } from "../Context/UserContext";
 import { Loading } from "../Components/Forms/Loading";
+import { useTarefasContext } from "../Context/TarefasContext";
 
 const Dashboard = () => {
-  const { pathname } = useLocation();
   const [title, setTitle] = useState<string>("Dashboard");
+  const { pathname } = useLocation();
   const { data } = useUserContext();
+  const { setStatus } = useTarefasContext();
 
   useEffect(() => {
+    setStatus(null);
+
     if (pathname.includes("adicionar")) setTitle("Adicionar Tarefa");
     if (pathname.includes("tarefas")) setTitle("Suas Tarefas");
     if (pathname.includes("documentos")) setTitle("Seus Documentos");

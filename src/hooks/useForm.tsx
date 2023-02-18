@@ -1,5 +1,6 @@
 import React from "react";
 import isEmail from "validator/lib/isEmail";
+import { useTarefasContext } from "../Context/TarefasContext";
 
 // Biblioteca validator para validar os dados
 const validation = {
@@ -12,6 +13,9 @@ const validation = {
 const useForm = (type?: keyof typeof validation) => {
   const [value, setValue] = React.useState<string>("");
   const [error, setError] = React.useState<string | null>(null);
+
+  // Redefinindo mensagens de erro
+  const { setStatus } = useTarefasContext();
 
   // Validação dos valores dos inputs
   const validate = (value: string): boolean => {
@@ -33,6 +37,7 @@ const useForm = (type?: keyof typeof validation) => {
       validate(e.target.value);
     }
 
+    setStatus(null);
     setValue(e.target.value);
   };
 
