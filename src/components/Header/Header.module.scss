@@ -23,6 +23,12 @@
     font-weight: 600;
 }
 
+.login {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
 .login a {
     font-weight: 600;
     padding: .5rem 1.2rem !important;

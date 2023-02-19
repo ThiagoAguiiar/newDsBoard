@@ -20,6 +20,10 @@
       font-size: 1.2rem;
       color: #333;
       font-weight: 600;
+      white-space: nowrap;
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .description {
@@ -87,4 +91,14 @@
   }
 }
 
+@media screen and (max-width: 840px) {
+  .container {
+    .tasks {
+      padding: 2rem 0rem !important;
+    }
 
+    .item {
+      padding: 1rem .5rem !important;
+    }
+  }
+}

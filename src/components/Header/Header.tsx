@@ -37,13 +37,13 @@ const Header = () => {
 
   return (
     <header className={styles.header} style={background && { ...background }}>
-      <nav>
-        <div className={styles.logo}>
+      <nav className="row">
+        <div className={`${styles.logo} col-8`}>
           <Link to={login ? "/dashboard" : "/"}>
             <span>DsBoard</span>
           </Link>
         </div>
-        <div className={styles.login}>
+        <div className={`${styles.login} col-4`}>
           {login ? <Profile /> : <Link to="/login">Entrar</Link>}
         </div>
       </nav>

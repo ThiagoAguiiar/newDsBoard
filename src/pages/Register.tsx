@@ -24,7 +24,14 @@ const Register = () => {
   return (
     <div className={`${styles.container} row`}>
       <div className={`${styles.background} col-md-6 col-12`}>
-        <div></div>
+        <div>
+          <div className={styles.glassMorphism}>
+            <h1>É Trabalho</h1>
+            <h1>É Estudo</h1>
+            <h1>É Academia</h1>
+            <h1>É DsBoard</h1>
+          </div>
+        </div>
       </div>
 
       <form className="col-md-6 col-12 animateForm" onSubmit={registerUser}>

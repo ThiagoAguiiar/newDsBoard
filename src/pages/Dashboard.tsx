@@ -36,10 +36,10 @@ const Dashboard = () => {
   return (
     <div className={styles.container}>
       <header className={`${styles.header} row`}>
-        <div className="col-md-3">
+        <div className="col-md-3 col-4">
           <h3>{title}</h3>
         </div>
-        <div className={`${styles.actions} col-md-9`}>
+        <div className={`${styles.actions} col-md-9 col-8`}>
           <NavLink to="adicionar">
             <AiOutlinePlus />
           </NavLink>

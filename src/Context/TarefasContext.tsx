@@ -57,20 +57,25 @@ export const TarefasProvider = ({ children }: ProviderType) => {
   const createTasks = async (title: string, description?: string) => {
     try {
       setLoading(true);
-      setStatus({
-        msg: "Tarefa adicionada com sucesso",
-        error: 200,
-      });
 
-      await addDoc(collection(db, token!), {
-        titulo: title,
-        descricao: description,
-      });
+      if (token) {
+        const response = await addDoc(collection(db, token), {
+          titulo: title,
+          descricao: description,
+        });
+
+        if (response)
+          setStatus({
+            msg: "Tarefa adicionada com sucesso",
+            error: 200,
+          });
+      }
     } catch (e) {
       setStatus({
         msg: "Ocorreu um erro Inesperado",
         error: 404,
       });
+      console.log(e);
     } finally {
       setLoading(false);
     }
@@ -79,8 +84,10 @@ export const TarefasProvider = ({ children }: ProviderType) => {
   const getAllTasks = async () => {
     try {
       setLoading(true);
-      const response = await getDocs(query(collection(db, token!)));
-      setTasks(response.docs);
+      if (token) {
+        const response = await getDocs(query(collection(db, token)));
+        setTasks(response.docs);
+      }
     } catch (e) {
       setStatus({
         msg: "Não foi possível concluir a operação",
@@ -98,7 +105,7 @@ export const TarefasProvider = ({ children }: ProviderType) => {
         error: 200,
       });
 
-      await deleteDoc(doc(db, token!, id));
+      if (token) await deleteDoc(doc(db, token, id));
     } catch (e) {
       setStatus({
         msg: "Não foi possível concluir a operação",

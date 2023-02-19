@@ -5,7 +5,6 @@ import styles from "./Tarefas.module.scss";
 import { RiListCheck2 } from "react-icons/ri";
 import { TbTrash } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
-import Image from "../../img/notTask.gif";
 import { Button } from "../Forms/Button";
 
 const Tarefas = () => {
@@ -15,8 +14,6 @@ const Tarefas = () => {
   useEffect(() => {
     getAllTasks();
   }, []);
-
-  console.log(tasks);
 
   if (loading)
     return (
@@ -36,11 +33,11 @@ const Tarefas = () => {
           <div className={styles.tasks}>
             {tasks.map((task: any, index: any) => (
               <div className={`${styles.item} row`} key={index}>
-                <div className="col-md-6 col-12">
+                <div className="col-md-6 col-7">
                   <h1>{task.data().titulo}</h1>
                   <p className={styles.description}>{task.data().descricao}</p>
                 </div>
-                <div className="col-md-6 col-12">
+                <div className="col-md-6 col-5">
                   <div className={styles.actions}>
                     <button
                       className={styles.edit}
@@ -48,6 +45,7 @@ const Tarefas = () => {
                     >
                       <RiListCheck2 />
                     </button>
+
                     <button
                       className={styles.delete}
                       onClick={() => {
@@ -66,7 +64,11 @@ const Tarefas = () => {
           <div className={styles.notTask}>
             <h3>Você não tem tarefas...</h3>
             <div>
-              <Button value="Adicionar Tarefa" borderRadius="3px" />
+              <Button
+                value="Adicionar Tarefa"
+                borderRadius="3px"
+                onClick={() => navigate("/dashboard/adicionar")}
+              />
             </div>
           </div>
         )}

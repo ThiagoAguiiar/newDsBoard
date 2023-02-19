@@ -37,9 +37,9 @@ export const RoutesApp = () => {
             >
               <Route path="" element={<Adicionar />} />
               <Route path="adicionar" element={<Adicionar />} />
-              <Route path="tarefas" element={<Tarefas />}>
-                <Route path="tarefas/id:" element={<Edit />} />
-              </Route>
+              <Route path="tarefas" element={<Tarefas />} />
+              <Route path="tarefas/:id" element={<Edit />} />
+
               <Route path="documentos" element={<Documents />} />
             </Route>
           </Routes>
