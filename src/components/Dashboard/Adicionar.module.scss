@@ -8,6 +8,7 @@
 .form {
   margin-top: 1rem !important;
   padding: 0 !important;
+  position: relative;
 
   h2 {
     padding: .5rem 0rem !important;
@@ -42,6 +43,6 @@
 
   .status {
     margin-top: 1rem !important;
-    transition: .2s;
+    position: absolute;
   }
 }

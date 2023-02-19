@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Adicionar from "./Components/Dashboard/Adicionar";
 import Documents from "./Components/Dashboard/Documents";
+import Edit from "./Components/Dashboard/Edit";
 import Tarefas from "./Components/Dashboard/Tarefas";
 import Header from "./Components/Header/Header";
 import { TarefasProvider } from "./Context/TarefasContext";
@@ -36,7 +37,9 @@ export const RoutesApp = () => {
             >
               <Route path="" element={<Adicionar />} />
               <Route path="adicionar" element={<Adicionar />} />
-              <Route path="tarefas" element={<Tarefas />} />
+              <Route path="tarefas" element={<Tarefas />}>
+                <Route path="tarefas/id:" element={<Edit />} />
+              </Route>
               <Route path="documentos" element={<Documents />} />
             </Route>
           </Routes>

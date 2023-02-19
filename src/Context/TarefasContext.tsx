@@ -1,6 +1,8 @@
 import {
   addDoc,
   collection,
+  deleteDoc,
+  doc,
   DocumentData,
   getDocs,
   query,
@@ -21,6 +23,7 @@ type ContextType = {
   status: StatusType | null;
   setStatus: (state: StatusType | null) => void;
   tasks: DocumentData | DocumentData[] | null;
+  deleteTasks: (id: string) => Promise<void>;
 };
 
 type ProviderType = {
@@ -28,8 +31,8 @@ type ProviderType = {
 };
 
 type StatusType = {
-  msg: string;
-  color: string;
+  msg: string | null;
+  error: number;
 };
 
 const TarefasContext = createContext<ContextType | null>(null);
@@ -38,7 +41,7 @@ export const TarefasProvider = ({ children }: ProviderType) => {
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [status, setStatus] = useState<StatusType | null>(null);
-  const [tasks, setTasks] = useState<DocumentData[] | DocumentData | null>(
+  const [tasks, setTasks] = useState<DocumentData | DocumentData[] | null>(
     null
   );
 
@@ -56,7 +59,7 @@ export const TarefasProvider = ({ children }: ProviderType) => {
       setLoading(true);
       setStatus({
         msg: "Tarefa adicionada com sucesso",
-        color: "green",
+        error: 200,
       });
 
       await addDoc(collection(db, token!), {
@@ -65,10 +68,9 @@ export const TarefasProvider = ({ children }: ProviderType) => {
       });
     } catch (e) {
       setStatus({
-        msg: "Erro Inesperado",
-        color: "red",
+        msg: "Ocorreu um erro Inesperado",
+        error: 404,
       });
-      console.log(e);
     } finally {
       setLoading(false);
     }
@@ -78,12 +80,30 @@ export const TarefasProvider = ({ children }: ProviderType) => {
     try {
       setLoading(true);
       const response = await getDocs(query(collection(db, token!)));
-      const result = response.docs.map((doc) => doc.data());
-      setTasks(result);
+      setTasks(response.docs);
     } catch (e) {
-      console.log(e);
+      setStatus({
+        msg: "Não foi possível concluir a operação",
+        error: 404,
+      });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const deleteTasks = async (id: string) => {
+    try {
+      setStatus({
+        msg: "Tarefa excluída com sucesso!",
+        error: 200,
+      });
+
+      await deleteDoc(doc(db, token!, id));
+    } catch (e) {
+      setStatus({
+        msg: "Não foi possível concluir a operação",
+        error: 404,
+      });
     }
   };
 
@@ -96,6 +116,7 @@ export const TarefasProvider = ({ children }: ProviderType) => {
         status,
         setStatus: setInternalStatus,
         tasks,
+        deleteTasks,
       }}
     >
       {children}

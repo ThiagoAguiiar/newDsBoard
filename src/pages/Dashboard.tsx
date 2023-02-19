@@ -9,16 +9,17 @@ import { useTarefasContext } from "../Context/TarefasContext";
 
 const Dashboard = () => {
   const [title, setTitle] = useState<string>("Dashboard");
+  const { setStatus } = useTarefasContext();
   const { pathname } = useLocation();
   const { data } = useUserContext();
-  const { setStatus } = useTarefasContext();
 
   useEffect(() => {
-    setStatus(null);
-
     if (pathname.includes("adicionar")) setTitle("Adicionar Tarefa");
-    if (pathname.includes("tarefas")) setTitle("Suas Tarefas");
-    if (pathname.includes("documentos")) setTitle("Seus Documentos");
+    else if (pathname.includes("tarefas")) setTitle("Suas Tarefas");
+    else if (pathname.includes("documentos")) setTitle("Seus Documentos");
+    else setTitle("Dashboard");
+
+    setStatus(null);
   }, [pathname]);
 
   if (!data)

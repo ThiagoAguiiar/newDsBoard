@@ -1,14 +1,13 @@
 import { FormEvent, ChangeEvent, useState } from "react";
 import { useTarefasContext } from "../../Context/TarefasContext";
-import useForm from "../../Hooks/useForm";
 import { Button } from "../Forms/Button";
 import { Input } from "../Forms/Input";
+import useForm from "../../Hooks/useForm";
 import styles from "./Adicionar.module.scss";
 
 const Adicionar = () => {
   const titulo = useForm();
   const { createTasks, loading, status, setStatus } = useTarefasContext();
-
   const [descricao, setDescricao] = useState<string>("");
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -20,8 +19,6 @@ const Adicionar = () => {
     e.preventDefault();
     if (titulo.validate()) {
       createTasks(titulo.value, descricao);
-    } else {
-      console.log("erro");
     }
   };
 
@@ -41,8 +38,13 @@ const Adicionar = () => {
             borderRadius="3px"
           />
         </div>
-        <div className={styles.status}>
-          {status && <p style={{ color: status.color }}>{status.msg}</p>}
+
+        <div className={`${styles.status} `}>
+          {status && (
+            <p style={{ color: status.error === 200 ? "green" : "red" }}>
+              {status.msg}
+            </p>
+          )}
         </div>
       </form>
 

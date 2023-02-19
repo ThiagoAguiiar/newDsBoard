@@ -1,6 +1,4 @@
 import { RoutesApp } from "./Routes";
-import { useUserContext } from "./Context/UserContext";
-import { useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./global.scss";
 
