@@ -67,7 +67,7 @@ const Tarefas = () => {
               <Button
                 value="Adicionar Tarefa"
                 borderRadius="3px"
-                onClick={() => navigate("/dashboard/adicionar")}
+                onClick={() => navigate("/dashboard")}
               />
             </div>
           </div>

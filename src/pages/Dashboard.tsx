@@ -40,7 +40,7 @@ const Dashboard = () => {
           <h3>{title}</h3>
         </div>
         <div className={`${styles.actions} col-md-9 col-8`}>
-          <NavLink to="adicionar">
+          <NavLink to="">
             <AiOutlinePlus />
           </NavLink>
           <NavLink to="tarefas">

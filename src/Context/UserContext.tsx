@@ -1,4 +1,10 @@
-import { createContext, ReactNode, useContext, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useState,
+  useEffect,
+} from "react";
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -29,6 +35,7 @@ type UserContextType = {
   createAccount: (email: string, password: string) => Promise<void>;
   getUserData: () => void;
   forgotPassword: (email: string) => Promise<void>;
+  token: string | null;
 };
 
 type LoadingType = {
@@ -59,6 +66,13 @@ export const UserProvider = ({ children }: UserType) => {
   const [login, setLogin] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<DataType | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    const local = localStorage.getItem("token");
+    if (local) setToken(local);
+  });
+
   const navigate = useNavigate();
 
   const setInternalError = (error: string) => {
@@ -213,6 +227,7 @@ export const UserProvider = ({ children }: UserType) => {
         createAccount,
         getUserData,
         forgotPassword,
+        token,
       }}
     >
       {children}
