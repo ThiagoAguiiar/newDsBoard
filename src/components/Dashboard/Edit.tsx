@@ -1,4 +1,4 @@
-import { useEffect, ChangeEvent, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTarefasContext } from "../../Context/TarefasContext";
 import { Loading } from "../Forms/Loading";
@@ -56,6 +56,7 @@ const Edit = () => {
           id="descricao"
           className={styles.descData}
           ref={descRef}
+          data-text="Adicionar descrição..."
         >
           {editTask.data().descricao}
         </div>

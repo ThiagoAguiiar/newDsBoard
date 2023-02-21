@@ -93,3 +93,7 @@
   outline: none !important;
   border: none !important;
 }
+
+[contentEditable="true"]:empty:not(:focus):before {
+  content: attr(data-text);
+}
