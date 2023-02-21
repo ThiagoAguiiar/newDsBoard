@@ -7,8 +7,10 @@ import {
   getDoc,
   getDocs,
   query,
+  updateDoc,
 } from "firebase/firestore";
 import { createContext, ReactNode, useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { db } from "../Api/Firebase";
 import { useUserContext } from "./UserContext";
 
@@ -22,6 +24,7 @@ type ContextType = {
   deleteTasks: (id: string) => Promise<void>;
   editTask: DocumentData | null;
   getEditTask: (id: string) => Promise<void>;
+  updateTask: (id: string, title: string, description: string) => void;
 };
 
 type ProviderType = {
@@ -37,6 +40,7 @@ const TarefasContext = createContext<ContextType | null>(null);
 
 export const TarefasProvider = ({ children }: ProviderType) => {
   const { token } = useUserContext();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
   const [status, setStatus] = useState<StatusType | null>(null);
   const [tasks, setTasks] = useState<DocumentData | DocumentData[] | null>(
@@ -53,6 +57,7 @@ export const TarefasProvider = ({ children }: ProviderType) => {
     return `${date.toLocaleDateString()} às ${date.toLocaleTimeString()}`;
   };
 
+  // Cria uma nova tarefa
   const createTasks = async (title: string, description?: string) => {
     try {
       setLoading(true);
@@ -61,7 +66,7 @@ export const TarefasProvider = ({ children }: ProviderType) => {
         const response = await addDoc(collection(db, token), {
           titulo: title,
           descricao: description,
-          date: getCurrentDate(),
+          data: getCurrentDate(),
         });
 
         if (response)
@@ -81,6 +86,7 @@ export const TarefasProvider = ({ children }: ProviderType) => {
     }
   };
 
+  // Busca todas as tarefas do usuário
   const getAllTasks = async () => {
     try {
       setLoading(true);
@@ -100,6 +106,7 @@ export const TarefasProvider = ({ children }: ProviderType) => {
     }
   };
 
+  // Deleta a tarefa do usuário
   const deleteTasks = async (id: string) => {
     try {
       setStatus({
@@ -116,6 +123,7 @@ export const TarefasProvider = ({ children }: ProviderType) => {
     }
   };
 
+  // Buscar dados da tarefa que será editada
   const getEditTask = async (id: string) => {
     if (token) {
       const response = await getDoc(doc(db, token, id));
@@ -133,6 +141,26 @@ export const TarefasProvider = ({ children }: ProviderType) => {
     }
   };
 
+  // Atualizar tarefa
+  const updateTask = async (
+    id: string,
+    title: string,
+    description?: string
+  ) => {
+    if (token) {
+      try {
+        await updateDoc(doc(db, token, id), {
+          titulo: title,
+          descricao: description,
+          data: getCurrentDate(),
+        });
+        navigate("/dashboard/tarefas");
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  };
+
   return (
     <TarefasContext.Provider
       value={{
@@ -145,6 +173,7 @@ export const TarefasProvider = ({ children }: ProviderType) => {
         deleteTasks,
         getEditTask,
         editTask,
+        updateTask,
       }}
     >
       {children}
